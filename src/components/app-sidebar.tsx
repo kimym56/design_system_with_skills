@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, Clock3, Layers3 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
@@ -28,25 +27,16 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full flex-col justify-between rounded-[24px] border border-border/70 bg-white/88 px-4 py-4 text-foreground shadow-[0_1px_2px_rgba(15,23,42,0.04),0_18px_40px_rgba(15,23,42,0.04)] backdrop-blur xl:sticky xl:top-5 xl:min-h-[calc(100vh-2.5rem)]">
-      <div className="space-y-6">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <Badge variant="outline">Open access</Badge>
-            <span className="text-[11px] font-medium tracking-[0.08em] text-muted-foreground">
-              Guest
-            </span>
-          </div>
-          <div className="space-y-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
+    <aside className="rounded-[16px] border border-border bg-white px-3 py-3 text-foreground xl:sticky xl:top-4 xl:min-h-[calc(100vh-2rem)]">
+      <div className="flex h-full flex-col gap-5">
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
               Design System AI
             </p>
-            <h2 className="text-xl font-semibold tracking-[-0.03em] text-foreground">
+            <h2 className="text-sm font-medium tracking-[-0.01em] text-foreground">
               Approved component pipeline
             </h2>
-            <p className="text-sm leading-6 text-muted-foreground">
-              Generate, inspect, and store runs from the curated catalog.
-            </p>
           </div>
           <Button asChild size="sm" className="w-full justify-between">
             <Link href="/workspace">
@@ -58,47 +48,33 @@ export function AppSidebar() {
 
         <Separator />
 
-        <nav className="space-y-2">
+        <nav className="space-y-0.5">
           {navigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               aria-current={pathname === item.href ? "page" : undefined}
               className={cn(
-                "group flex items-start gap-3 rounded-[16px] border px-3.5 py-3 transition-[background-color,border-color,box-shadow]",
+                "group flex items-center gap-2.5 rounded-[10px] border px-3 py-2 text-sm transition-[background-color,border-color]",
                 pathname === item.href
-                  ? "border-primary/20 bg-accent/80 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]"
-                  : "border-transparent bg-transparent hover:border-border hover:bg-secondary/70",
+                  ? "border-primary/15 bg-accent text-foreground"
+                  : "border-transparent bg-transparent text-muted-foreground hover:bg-secondary hover:text-foreground",
               )}
             >
               <item.icon
                 className={cn(
-                  "mt-0.5 size-4 shrink-0 transition-colors",
+                  "size-4 shrink-0 transition-colors",
                   pathname === item.href
                     ? "text-primary"
                     : "text-muted-foreground group-hover:text-foreground",
                 )}
               />
-              <span className="space-y-1.5">
-                <span className="block text-sm font-medium tracking-[-0.01em]">
-                  {item.label}
-                </span>
-                <span className="block text-sm leading-5 text-muted-foreground">
-                  {item.description}
-                </span>
+              <span className="min-w-0 flex-1 truncate font-medium tracking-[-0.01em]">
+                {item.label}
               </span>
             </Link>
           ))}
         </nav>
-      </div>
-
-      <div className="space-y-3">
-        <Separator />
-        <div className="rounded-[16px] border border-border/70 bg-secondary/70 px-4 py-4">
-          <p className="text-sm leading-6 text-muted-foreground">
-            Safe runtime. Approved inputs. Saved runs.
-          </p>
-        </div>
       </div>
     </aside>
   );

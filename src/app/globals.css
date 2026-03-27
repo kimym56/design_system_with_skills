@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f9fc;
+  --background: #fafafa;
   --foreground: #0f172a;
   --card: #ffffff;
   --card-foreground: #0f172a;
@@ -9,20 +9,20 @@
   --popover-foreground: #0f172a;
   --primary: #1d4ed8;
   --primary-foreground: #f8fafc;
-  --secondary: #f3f6fb;
+  --secondary: #f6f6f7;
   --secondary-foreground: #0f172a;
-  --muted: #f5f7fb;
+  --muted: #f7f7f8;
   --muted-foreground: #5b6475;
-  --accent: #edf4ff;
+  --accent: #f4f8ff;
   --accent-foreground: #1d4ed8;
   --destructive: #dc2626;
   --destructive-foreground: #fafafa;
-  --border: #e2e8f0;
-  --input: #d7deea;
+  --border: #e5e7eb;
+  --input: #d9dde3;
   --ring: #1d4ed8;
   --code-surface: #0a0a0a;
   --code-foreground: #f8fafc;
-  --radius: 1.25rem;
+  --radius: 1rem;
 }
 
 @theme inline {
@@ -66,9 +66,7 @@ html {
 
 body {
   min-height: 100%;
-  background:
-    radial-gradient(circle at top, rgba(29, 78, 216, 0.06), transparent 26%),
-    linear-gradient(180deg, #f8fafc 0%, #f4f7fb 100%);
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   text-rendering: optimizeLegibility;

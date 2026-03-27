@@ -7,9 +7,8 @@ import { ArrowLeft } from "lucide-react";
 
 import { GenerationCodePanel } from "@/components/generation-code-panel";
 import { GenerationPreviewFrame } from "@/components/generation-preview-frame";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 type GenerationDetail = {
@@ -81,22 +80,18 @@ export default function GenerationDetailPage() {
   if (!generation) {
     return (
       <Card className="shadow-none">
-        <CardContent className="space-y-3 p-6">
-          <Badge variant="secondary">Opening run</Badge>
-          <p className="text-sm leading-6 text-muted-foreground">
-            Loading saved result...
-          </p>
+        <CardContent className="p-6 text-sm leading-6 text-muted-foreground">
+          Loading saved result...
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <main className="space-y-6">
-      <header className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-        <div className="space-y-3">
-          <Badge variant="outline">Saved run</Badge>
-          <h1 className="text-4xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">
+    <main className="space-y-4">
+      <header className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
             {generation.componentType}
           </h1>
           <p className="text-sm tracking-[0.01em] text-muted-foreground">
@@ -114,14 +109,16 @@ export default function GenerationDetailPage() {
       </header>
 
       <Card className="shadow-none">
-        <CardHeader className="border-b border-border/70 bg-secondary/50">
-          <CardTitle>Saved run summary</CardTitle>
-          <p className="text-sm leading-6 text-muted-foreground">
-            Approved inputs and model output captured for this generation.
-          </p>
-        </CardHeader>
-        <CardContent className="grid gap-6 pt-6 lg:grid-cols-[minmax(0,0.56fr)_minmax(0,1fr)]">
-          <div className="space-y-5">
+        <CardContent className="grid gap-4 p-5 lg:grid-cols-[minmax(0,0.56fr)_minmax(0,1fr)]">
+          <div className="space-y-2">
+            <h2 className="text-lg font-semibold tracking-[-0.02em] text-foreground">
+              Saved run summary
+            </h2>
+            <p className="text-sm leading-6 text-muted-foreground">
+              Approved inputs and model output captured for this generation.
+            </p>
+          </div>
+          <div className="space-y-4">
             <div className="space-y-1">
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 Recorded
@@ -137,17 +134,13 @@ export default function GenerationDetailPage() {
               <p className="text-sm text-foreground">{generation.model}</p>
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3 lg:col-span-2">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               Approved skills
             </p>
-            <div className="flex flex-wrap gap-2">
-              {generation.selectedSkills.map(({ skill }) => (
-                <Badge key={skill.id} variant="outline">
-                  {skill.name}
-                </Badge>
-              ))}
-            </div>
+            <p className="text-sm leading-6 text-muted-foreground">
+              {generation.selectedSkills.map(({ skill }) => skill.name).join(" • ")}
+            </p>
             {generation.rationale ? (
               <>
                 <Separator className="bg-border/70" />
@@ -160,13 +153,14 @@ export default function GenerationDetailPage() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
         <Card className="shadow-none">
-          <CardHeader className="space-y-3">
-            <Badge variant="outline">Rendered</Badge>
-            <CardTitle>Preview</CardTitle>
-          </CardHeader>
-          <CardContent>
+          <div className="border-b border-border px-5 py-4">
+            <h2 className="text-lg font-semibold tracking-[-0.02em] text-foreground">
+              Preview
+            </h2>
+          </div>
+          <CardContent className="pt-5">
             <GenerationPreviewFrame
               markup={generation.previewPayload?.html ?? null}
             />
@@ -174,11 +168,12 @@ export default function GenerationDetailPage() {
         </Card>
 
         <Card className="shadow-none">
-          <CardHeader className="space-y-3">
-            <Badge variant="outline">Source</Badge>
-            <CardTitle>Generated code</CardTitle>
-          </CardHeader>
-          <CardContent>
+          <div className="border-b border-border px-5 py-4">
+            <h2 className="text-lg font-semibold tracking-[-0.02em] text-foreground">
+              Generated code
+            </h2>
+          </div>
+          <CardContent className="pt-5">
             <GenerationCodePanel code={generation.resultCode} />
           </CardContent>
         </Card>

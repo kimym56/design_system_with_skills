@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Clock3 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -72,12 +71,12 @@ export function HistoryList() {
 
   if (items === null) {
     return (
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3 md:grid-cols-2">
         {[0, 1].map((placeholder) => (
           <Card key={placeholder} className="shadow-none">
-            <CardContent className="space-y-4 p-6">
+            <CardContent className="space-y-3 p-5">
               <div className="h-3 w-24 rounded-full bg-muted" />
-              <div className="h-8 w-40 rounded-full bg-muted" />
+              <div className="h-6 w-40 rounded-full bg-muted" />
               <div className="h-3 w-full rounded-full bg-muted" />
               <div className="h-3 w-2/3 rounded-full bg-muted" />
             </CardContent>
@@ -89,66 +88,55 @@ export function HistoryList() {
 
   if (items.length === 0) {
     return (
-      <Card className="border-dashed bg-secondary/50 shadow-none">
-        <CardContent className="space-y-4 p-8">
-          <Badge variant="secondary">History</Badge>
-          <div className="space-y-2">
-            <p className="text-xl font-semibold tracking-[-0.02em] text-foreground">
-              No runs yet.
-            </p>
-            <p className="max-w-xl text-sm leading-6 text-muted-foreground">
-              Run a generation in the workspace to save the approved inputs,
-              rendered preview, and source for later review.
-            </p>
-          </div>
+      <Card className="border-dashed bg-white shadow-none">
+        <CardContent className="space-y-2 p-6">
+          <p className="text-xl font-semibold tracking-[-0.02em] text-foreground">
+            No runs yet.
+          </p>
+          <p className="max-w-xl text-sm leading-6 text-muted-foreground">
+            Run a generation in the workspace to save the approved inputs,
+            rendered preview, and source for later review.
+          </p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="overflow-hidden rounded-[16px] border border-border bg-white">
       {items.map((item) => {
         const skillNames = item.selectedSkills.map(({ skill }) => skill.name);
 
         return (
-          <Link key={item.id} href={`/history/${item.id}`} className="group block">
-            <Card
+          <Link
+            key={item.id}
+            href={`/history/${item.id}`}
+            className={cn(
+              "group block px-4 py-3.5 transition-colors hover:bg-secondary/60",
+              item !== items[0] ? "border-t border-border" : "",
+            )}
+          >
+            <div
               className={cn(
-                "h-full border-border/80 bg-white/92 transition-all duration-200",
-                "hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-[0_22px_50px_rgba(59,91,219,0.10)]",
+                "flex flex-col gap-4 md:flex-row md:items-start md:justify-between",
               )}
             >
-              <CardContent className="flex h-full flex-col gap-5 p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-2">
-                    <Badge variant="outline">Saved run</Badge>
-                    <h2 className="text-2xl font-semibold tracking-[-0.03em] text-foreground">
-                      {item.componentType}
-                    </h2>
-                  </div>
-                  <ArrowUpRight className="size-4 text-primary transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Clock3 className="size-4" />
-                  <span>{new Date(item.createdAt).toLocaleString()}</span>
-                </div>
-
-                <div className="space-y-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                    Selected skills
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {skillNames.map((skillName) => (
-                      <Badge key={skillName} variant="outline">
-                        {skillName}
-                      </Badge>
-                    ))}
+              <div className="space-y-2">
+                <div className="flex flex-col gap-1 md:flex-row md:items-center md:gap-3">
+                  <h2 className="text-base font-semibold tracking-[-0.02em] text-foreground">
+                    {item.componentType}
+                  </h2>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Clock3 className="size-4" />
+                    <span>{new Date(item.createdAt).toLocaleString()}</span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+                <p className="text-sm leading-5 text-muted-foreground">
+                  {skillNames.join(" • ")}
+                </p>
+              </div>
+              <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
+            </div>
           </Link>
         );
       })}

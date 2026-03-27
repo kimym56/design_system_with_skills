@@ -5,6 +5,7 @@ import type {
   Prisma,
 } from "@prisma/client";
 
+import type { RequestActor } from "@/lib/auth/request-actor";
 import { db } from "@/lib/db";
 
 type GenerationRecord = ComponentGeneration & {
@@ -12,6 +13,24 @@ type GenerationRecord = ComponentGeneration & {
     skill: Skill;
   }>;
 };
+
+type SaveGenerationOwnerInput =
+  | {
+      userId: string;
+      guestId?: never;
+    }
+  | {
+      userId?: never;
+      guestId: string;
+    };
+
+export function buildGenerationOwnerFilter(actor: RequestActor) {
+  if (actor.type === "user") {
+    return { userId: actor.userId };
+  }
+
+  return { guestId: actor.guestId };
+}
 
 export async function getPublishedSkills(
   skillIds: string[],
@@ -30,6 +49,7 @@ export async function getPublishedSkills(
 export async function saveGeneration(
   {
     userId,
+    guestId,
     componentType,
     model,
     promptSnapshot,
@@ -38,7 +58,8 @@ export async function saveGeneration(
     rationale,
     selectedSkillIds,
   }: {
-    userId: string;
+    userId?: string;
+    guestId?: string;
     componentType: string;
     model: string;
     promptSnapshot: Prisma.InputJsonObject;
@@ -46,12 +67,13 @@ export async function saveGeneration(
     previewMarkup: string;
     rationale: string;
     selectedSkillIds: string[];
-  },
+  } & SaveGenerationOwnerInput,
   prisma: PrismaClient = db,
 ) {
   return prisma.componentGeneration.create({
     data: {
       userId,
+      guestId,
       componentType,
       model,
       promptSnapshot,
@@ -76,12 +98,12 @@ export async function saveGeneration(
   });
 }
 
-export async function listGenerationsForUser(
-  userId: string,
+export async function listGenerationsForActor(
+  actor: RequestActor,
   prisma: PrismaClient = db,
 ) {
   return prisma.componentGeneration.findMany({
-    where: { userId },
+    where: buildGenerationOwnerFilter(actor),
     include: {
       selectedSkills: {
         include: {
@@ -95,15 +117,28 @@ export async function listGenerationsForUser(
   });
 }
 
-export async function getGenerationForUser(
-  generationId: string,
+export async function listGenerationsForUser(
   userId: string,
+  prisma: PrismaClient = db,
+) {
+  return listGenerationsForActor(
+    {
+      type: "user",
+      userId,
+    },
+    prisma,
+  );
+}
+
+export async function getGenerationForActor(
+  generationId: string,
+  actor: RequestActor,
   prisma: PrismaClient = db,
 ) {
   return prisma.componentGeneration.findFirst({
     where: {
       id: generationId,
-      userId,
+      ...buildGenerationOwnerFilter(actor),
     },
     include: {
       selectedSkills: {
@@ -113,4 +148,19 @@ export async function getGenerationForUser(
       },
     },
   }) as Promise<GenerationRecord | null>;
+}
+
+export async function getGenerationForUser(
+  generationId: string,
+  userId: string,
+  prisma: PrismaClient = db,
+) {
+  return getGenerationForActor(
+    generationId,
+    {
+      type: "user",
+      userId,
+    },
+    prisma,
+  );
 }

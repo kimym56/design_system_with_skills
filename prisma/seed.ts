@@ -1,8 +1,19 @@
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, SkillPublishStatus, SkillSourceType } from "@prisma/client";
 
 import skillsLock from "../skills-lock.json";
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL is required to run the Prisma seed script.");
+}
+
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({
+    connectionString,
+  }),
+});
 
 type SkillsLockFile = {
   skills: Record<

@@ -1,29 +1,39 @@
-import { getServerAuthSession } from "@/auth";
+import {
+  applyGuestCookie,
+  resolveCurrentRequestActor,
+} from "@/lib/auth/request-actor";
 import { db } from "@/lib/db";
-import { getUserQuotaStatus } from "@/lib/generation/quota-service";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const session = await getServerAuthSession();
+  const { actor, cookieToSet } = await resolveCurrentRequestActor();
 
-  if (!session?.user?.id) {
-    return Response.json({ error: "Authentication required." }, { status: 401 });
-  }
+  const skills = await db.skill.findMany({
+    where: {
+      publishStatus: "PUBLISHED",
+    },
+    orderBy: [{ githubStars: "desc" }, { name: "asc" }],
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      githubStars: true,
+    },
+  });
 
-  const [skills, quota] = await Promise.all([
-    db.skill.findMany({
-      where: {
-        publishStatus: "PUBLISHED",
-      },
-      orderBy: [{ githubStars: "desc" }, { name: "asc" }],
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        githubStars: true,
+  return applyGuestCookie(
+    Response.json({
+      skills,
+      quota: {
+        allowed: true,
+        remaining: null,
+        limit: null,
+        usedToday: 0,
+        actorId: actor.type === "user" ? actor.userId : actor.guestId,
+        isUnlimited: true,
       },
     }),
-    getUserQuotaStatus(db, session.user.id),
-  ]);
-
-  return Response.json({ skills, quota });
+    cookieToSet,
+  );
 }

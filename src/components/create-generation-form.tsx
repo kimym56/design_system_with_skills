@@ -1,7 +1,18 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { ArrowUpRight } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
   COMPONENT_TYPE_SUMMARIES,
   CORE_COMPONENT_TYPES,
@@ -19,9 +30,10 @@ type SkillOption = {
 };
 
 type QuotaPayload = {
-  remaining: number;
+  remaining: number | null;
   usedToday: number;
-  limit: number;
+  limit: number | null;
+  isUnlimited?: boolean;
 };
 
 type GenerationPayload = {
@@ -123,85 +135,171 @@ export function CreateGenerationForm() {
     });
   }
 
+  const quotaLabel = quota
+    ? quota.isUnlimited
+      ? "Open access enabled"
+      : `${quota.remaining} of ${quota.limit} runs left today`
+    : "Checking workspace quota";
+
   return (
-    <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
-      <section className="space-y-6">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="rounded-full bg-amber-300/15 px-3 py-2 text-xs font-medium uppercase tracking-[0.24em] text-amber-200">
-            Safe Preview
-          </span>
-          {quota ? (
-            <span className="rounded-full bg-white/10 px-3 py-2 text-xs font-medium uppercase tracking-[0.24em] text-stone-200">
-              {quota.remaining} of {quota.limit} generations left today
-            </span>
-          ) : null}
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+      <section className="space-y-4">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Card className="shadow-none">
+            <CardHeader className="space-y-3">
+              <Badge variant="outline">Approved catalog</Badge>
+              <div className="space-y-1">
+                <CardTitle>Curated inputs only</CardTitle>
+                <CardDescription>
+                  Generation runs only against approved UI and UX skills.
+                </CardDescription>
+              </div>
+            </CardHeader>
+          </Card>
+
+          <Card className="shadow-none">
+            <CardHeader className="space-y-3">
+              <Badge variant="outline">Quota</Badge>
+              <div className="space-y-1">
+                <CardTitle>{quotaLabel}</CardTitle>
+                <CardDescription>
+                  Output stays inside the fixed preview runtime before it lands
+                  in history.
+                </CardDescription>
+              </div>
+            </CardHeader>
+          </Card>
         </div>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-3">
-            <label className="text-sm font-semibold text-white">
-              Component type
-            </label>
-            <select
-              value={componentType}
-              onChange={(event) =>
-                setComponentType(event.target.value as CoreComponentType)
-              }
-              className="w-full rounded-2xl border border-white/10 bg-stone-950 px-4 py-3 text-sm text-stone-100"
-            >
-              {CORE_COMPONENT_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-            <p className="text-sm leading-6 text-stone-300">
-              {COMPONENT_TYPE_SUMMARIES[componentType]}
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-semibold text-white">
-                Select UI/UX skills
-              </label>
-              <span className="text-xs uppercase tracking-[0.2em] text-stone-400">
-                Published catalog only
-              </span>
+        <Card className="overflow-hidden">
+          <CardHeader className="border-b border-border/70 bg-secondary/50">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="space-y-3">
+                <Badge variant="outline">Input</Badge>
+                <div className="space-y-1">
+                  <CardTitle>Generation inputs</CardTitle>
+                  <CardDescription>
+                    Choose one component type and approved skills.
+                  </CardDescription>
+                </div>
+              </div>
+              <Badge variant="secondary">Safe runtime</Badge>
             </div>
-            <SkillMultiSelect
-              options={skills}
-              selectedIds={selectedSkillIds}
-              onToggle={toggleSkill}
-            />
-          </div>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-foreground">
+                  Component type
+                </label>
+                <select
+                  value={componentType}
+                  onChange={(event) =>
+                    setComponentType(event.target.value as CoreComponentType)
+                  }
+                  className="h-10 w-full rounded-xl border border-input bg-background px-3.5 py-2 text-sm text-foreground shadow-[0_1px_2px_rgba(15,23,42,0.03)] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
+                  {CORE_COMPONENT_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-sm leading-6 text-muted-foreground">
+                  {COMPONENT_TYPE_SUMMARIES[componentType]}
+                </p>
+              </div>
 
-          {error ? (
-            <div className="rounded-[1.25rem] border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
-              {error}
-            </div>
-          ) : null}
+              <Separator className="bg-border/70" />
 
-          <button
-            type="submit"
-            disabled={isPending || selectedSkillIds.length === 0}
-            className="inline-flex items-center justify-center rounded-full bg-amber-300 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-amber-200 disabled:cursor-not-allowed disabled:bg-stone-700 disabled:text-stone-300"
-          >
-            {isPending ? "Generating..." : "Generate component"}
-          </button>
-        </form>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <label className="text-sm font-medium text-foreground">
+                    Approved skills
+                  </label>
+                  <Badge variant="secondary">Published catalog only</Badge>
+                </div>
+                <SkillMultiSelect
+                  options={skills}
+                  selectedIds={selectedSkillIds}
+                  onToggle={toggleSkill}
+                />
+              </div>
+
+              {error ? (
+                <div className="rounded-[1.25rem] border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                  {error}
+                </div>
+              ) : null}
+
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full justify-between sm:w-auto"
+                disabled={isPending || selectedSkillIds.length === 0}
+              >
+                {isPending ? "Generating..." : "Generate run"}
+                <ArrowUpRight className="size-4" />
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </section>
 
       <section className="grid gap-6">
-        <div className="space-y-3">
-          <h2 className="text-xl font-semibold text-white">Rendered result</h2>
-          <GenerationPreviewFrame markup={generation?.previewPayload?.html ?? null} />
-        </div>
+        <Card className="shadow-none">
+          <CardHeader className="space-y-3">
+            <div className="space-y-3">
+              <Badge variant="outline">Rendered</Badge>
+              <div className="space-y-1">
+                <CardTitle>Preview</CardTitle>
+                <CardDescription>
+                  Rendered output inside the isolated preview runtime.
+                </CardDescription>
+              </div>
+            </div>
+            <CardDescription>
+              Inspect layout, spacing, and interaction before saving the run.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <GenerationPreviewFrame markup={generation?.previewPayload?.html ?? null} />
+          </CardContent>
+        </Card>
 
-        <div className="space-y-3">
-          <h2 className="text-xl font-semibold text-white">Component code</h2>
-          <GenerationCodePanel code={generation?.resultCode ?? null} />
-        </div>
+        <Card className="shadow-none">
+          <CardHeader className="space-y-3">
+            <div className="space-y-3">
+              <Badge variant="outline">Source</Badge>
+              <div className="space-y-1">
+                <CardTitle>Generated code</CardTitle>
+                <CardDescription>
+                  Review the exact code returned for this component run.
+                </CardDescription>
+              </div>
+            </div>
+            <CardDescription>
+              Keep implementation details visible alongside the preview.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <GenerationCodePanel code={generation?.resultCode ?? null} />
+          </CardContent>
+        </Card>
+
+        {generation?.rationale ? (
+          <Card className="shadow-none">
+            <CardHeader className="space-y-2">
+              <Badge variant="outline">Model notes</Badge>
+              <CardTitle>Generation rationale</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm leading-7 text-muted-foreground">
+                {generation.rationale}
+              </p>
+            </CardContent>
+          </Card>
+        ) : null}
       </section>
     </div>
   );

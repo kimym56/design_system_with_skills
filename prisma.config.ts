@@ -1,9 +1,16 @@
 import "dotenv/config";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
+
+export const DEFAULT_DATABASE_URL =
+  "postgresql://postgres:postgres@localhost:5432/design_system_with_skills";
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
+  migrations: {
+    seed: "tsx prisma/seed.ts",
+  },
   datasource: {
-    url: env("DATABASE_URL"),
+    // Client generation should work in a fresh checkout before a local .env exists.
+    url: process.env.DATABASE_URL ?? DEFAULT_DATABASE_URL,
   },
 });

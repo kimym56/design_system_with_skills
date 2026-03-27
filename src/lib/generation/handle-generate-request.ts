@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+import {
+  applyGuestCookie,
+  type RequestActor,
+  resolveCurrentRequestActor,
+} from "@/lib/auth/request-actor";
 import { CORE_COMPONENT_TYPES } from "@/lib/catalog/component-types";
 import { buildGenerationInput } from "@/lib/generation/build-generation-input";
 import { generateComponentArtifact } from "@/lib/generation/openai-client";
@@ -14,14 +19,6 @@ const requestSchema = z.object({
   skillIds: z.array(z.string().min(1)).min(1),
 });
 
-type SessionShape = {
-  user?: {
-    id?: string;
-    email?: string | null;
-    name?: string | null;
-  };
-} | null;
-
 type SkillShape = {
   id: string;
   name: string;
@@ -29,15 +26,45 @@ type SkillShape = {
   readmeSummary?: string | null;
 };
 
+type QuotaStatusShape = {
+  allowed: boolean;
+  remaining: number | null;
+  limit: number | null;
+  usedToday: number;
+  actorId: string;
+  isUnlimited: boolean;
+};
+
+type SaveGenerationInput =
+  | {
+      userId: string;
+      guestId?: never;
+      componentType: string;
+      model: string;
+      promptSnapshot: ReturnType<typeof buildGenerationInput>;
+      resultCode: string;
+      previewMarkup: string;
+      rationale: string;
+      selectedSkillIds: string[];
+    }
+  | {
+      userId?: never;
+      guestId: string;
+      componentType: string;
+      model: string;
+      promptSnapshot: ReturnType<typeof buildGenerationInput>;
+      resultCode: string;
+      previewMarkup: string;
+      rationale: string;
+      selectedSkillIds: string[];
+    };
+
 type HandleGenerateRequestDependencies = {
-  getSession: () => Promise<SessionShape>;
-  getQuotaStatus: (userId: string) => Promise<{
-    allowed: boolean;
-    remaining: number;
-    limit: number;
-    usedToday: number;
-    userId: string;
+  resolveActor: () => Promise<{
+    actor: RequestActor;
+    cookieToSet: string | null;
   }>;
+  getQuotaStatus: (actorId: string) => Promise<QuotaStatusShape>;
   getSkills: (skillIds: string[]) => Promise<SkillShape[]>;
   generateComponent: (
     input: ReturnType<typeof buildGenerationInput>,
@@ -47,29 +74,32 @@ type HandleGenerateRequestDependencies = {
     previewMarkup: string;
     rationale: string;
   }>;
-  recordUsage: (userId: string) => Promise<unknown>;
-  saveGeneration: (input: {
-    userId: string;
-    componentType: string;
-    model: string;
-    promptSnapshot: ReturnType<typeof buildGenerationInput>;
-    resultCode: string;
-    previewMarkup: string;
-    rationale: string;
-    selectedSkillIds: string[];
-  }) => Promise<unknown>;
+  recordUsage: (actorId: string) => Promise<unknown>;
+  saveGeneration: (input: SaveGenerationInput) => Promise<unknown>;
 };
+
+const OPEN_ACCESS_MODE = true;
+
+function getActorId(actor: RequestActor) {
+  return actor.type === "user" ? actor.userId : actor.guestId;
+}
+
+function getUnlimitedQuotaStatus(actor: RequestActor): QuotaStatusShape {
+  return {
+    allowed: true,
+    remaining: null,
+    limit: null,
+    usedToday: 0,
+    actorId: getActorId(actor),
+    isUnlimited: true,
+  };
+}
 
 export async function handleGenerateRequest(
   body: unknown,
   dependencies: HandleGenerateRequestDependencies,
 ) {
-  const session = await dependencies.getSession();
-  const userId = session?.user?.id;
-
-  if (!userId) {
-    return Response.json({ error: "Authentication required." }, { status: 401 });
-  }
+  const { actor, cookieToSet } = await dependencies.resolveActor();
 
   const parsedBody = requestSchema.safeParse(body);
   if (!parsedBody.success) {
@@ -79,7 +109,11 @@ export async function handleGenerateRequest(
     );
   }
 
-  const quota = await dependencies.getQuotaStatus(userId);
+  const actorId = getActorId(actor);
+  const quota = OPEN_ACCESS_MODE
+    ? getUnlimitedQuotaStatus(actor)
+    : await dependencies.getQuotaStatus(actorId);
+
   if (!quota.allowed) {
     return Response.json(
       {
@@ -113,7 +147,9 @@ export async function handleGenerateRequest(
   }
 
   const saved = await dependencies.saveGeneration({
-    userId,
+    ...(actor.type === "user"
+      ? { userId: actor.userId }
+      : { guestId: actor.guestId }),
     componentType: parsedBody.data.componentType,
     model: "gpt-5.4",
     promptSnapshot: generationInput,
@@ -123,27 +159,34 @@ export async function handleGenerateRequest(
     selectedSkillIds: parsedBody.data.skillIds,
   });
 
-  await dependencies.recordUsage(userId);
+  if (!OPEN_ACCESS_MODE) {
+    await dependencies.recordUsage(actorId);
+  }
 
-  return Response.json({
-    generation: saved,
-    quota: {
-      ...quota,
-      remaining: Math.max(quota.remaining - 1, 0),
-      usedToday: quota.usedToday + 1,
-    },
-  });
+  return applyGuestCookie(
+    Response.json({
+      generation: saved,
+      quota,
+    }),
+    cookieToSet,
+  );
 }
 
 export function createGenerateRequestDependencies() {
   return {
-    getSession: async () => {
-      const { getServerAuthSession } = await import("@/auth");
-      return getServerAuthSession();
-    },
-    getQuotaStatus: async (userId: string) => {
+    resolveActor: resolveCurrentRequestActor,
+    getQuotaStatus: async (actorId: string) => {
       const { db } = await import("@/lib/db");
-      return getUserQuotaStatus(db, userId);
+      const quota = await getUserQuotaStatus(db, actorId);
+
+      return {
+        allowed: quota.allowed,
+        remaining: quota.remaining,
+        limit: quota.limit,
+        usedToday: quota.usedToday,
+        actorId,
+        isUnlimited: false,
+      };
     },
     getSkills: async (skillIds: string[]) => {
       const { db } = await import("@/lib/db");
@@ -153,20 +196,11 @@ export function createGenerateRequestDependencies() {
       return getPublishedSkills(skillIds, db);
     },
     generateComponent: generateComponentArtifact,
-    recordUsage: async (userId: string) => {
+    recordUsage: async (actorId: string) => {
       const { db } = await import("@/lib/db");
-      return recordGenerationUsage(db, userId);
+      return recordGenerationUsage(db, actorId);
     },
-    saveGeneration: async (input: {
-      userId: string;
-      componentType: string;
-      model: string;
-      promptSnapshot: ReturnType<typeof buildGenerationInput>;
-      resultCode: string;
-      previewMarkup: string;
-      rationale: string;
-      selectedSkillIds: string[];
-    }) => {
+    saveGeneration: async (input: SaveGenerationInput) => {
       const { db } = await import("@/lib/db");
       const { saveGeneration } = await import("@/lib/generation/history-service");
       return saveGeneration(input, db);

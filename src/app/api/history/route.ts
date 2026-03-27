@@ -1,14 +1,14 @@
-import { getServerAuthSession } from "@/auth";
-import { listGenerationsForUser } from "@/lib/generation/history-service";
+import {
+  applyGuestCookie,
+  resolveCurrentRequestActor,
+} from "@/lib/auth/request-actor";
+import { listGenerationsForActor } from "@/lib/generation/history-service";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const session = await getServerAuthSession();
+  const { actor, cookieToSet } = await resolveCurrentRequestActor();
+  const generations = await listGenerationsForActor(actor);
 
-  if (!session?.user?.id) {
-    return Response.json({ error: "Authentication required." }, { status: 401 });
-  }
-
-  const generations = await listGenerationsForUser(session.user.id);
-
-  return Response.json({ generations });
+  return applyGuestCookie(Response.json({ generations }), cookieToSet);
 }

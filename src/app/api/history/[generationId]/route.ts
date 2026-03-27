@@ -1,5 +1,10 @@
-import { getServerAuthSession } from "@/auth";
-import { getGenerationForUser } from "@/lib/generation/history-service";
+import {
+  applyGuestCookie,
+  resolveCurrentRequestActor,
+} from "@/lib/auth/request-actor";
+import { getGenerationForActor } from "@/lib/generation/history-service";
+
+export const dynamic = "force-dynamic";
 
 type Context = {
   params: Promise<{
@@ -8,18 +13,16 @@ type Context = {
 };
 
 export async function GET(_: Request, context: Context) {
-  const session = await getServerAuthSession();
-
-  if (!session?.user?.id) {
-    return Response.json({ error: "Authentication required." }, { status: 401 });
-  }
-
+  const { actor, cookieToSet } = await resolveCurrentRequestActor();
   const { generationId } = await context.params;
-  const generation = await getGenerationForUser(generationId, session.user.id);
+  const generation = await getGenerationForActor(generationId, actor);
 
   if (!generation) {
-    return Response.json({ error: "Generation not found." }, { status: 404 });
+    return applyGuestCookie(
+      Response.json({ error: "Generation not found." }, { status: 404 }),
+      cookieToSet,
+    );
   }
 
-  return Response.json({ generation });
+  return applyGuestCookie(Response.json({ generation }), cookieToSet);
 }

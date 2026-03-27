@@ -9,7 +9,7 @@ export function GenerationPreviewFrame({
 }) {
   if (!markup) {
     return (
-      <div className="flex min-h-[320px] items-center justify-center rounded-[1.5rem] border border-dashed border-white/15 bg-white/5 p-6 text-sm leading-6 text-stone-400">
+      <div className="flex min-h-[320px] items-center justify-center rounded-[18px] border border-dashed border-border bg-[linear-gradient(180deg,#fcfdff_0%,#f5f7fb_100%)] p-6 text-sm leading-6 text-muted-foreground">
         Generated preview appears here after a successful run.
       </div>
     );
@@ -20,7 +20,7 @@ export function GenerationPreviewFrame({
       title="Generated component preview"
       sandbox=""
       srcDoc={buildPreviewDocument(markup)}
-      className="min-h-[360px] w-full rounded-[1.5rem] border border-white/10 bg-white"
+      className="min-h-[360px] w-full rounded-[18px] border border-border/80 bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]"
     />
   );
 }

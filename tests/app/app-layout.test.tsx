@@ -8,6 +8,9 @@ test("authenticated app layout renders navigation labels", () => {
     </AppLayout>,
   );
 
-  expect(screen.getByRole("link", { name: /workspace/i })).toBeInTheDocument();
+  expect(
+    screen.getAllByRole("link", { name: /workspace/i }).length,
+  ).toBeGreaterThan(0);
   expect(screen.getByRole("link", { name: /history/i })).toBeInTheDocument();
+  expect(screen.getByText(/approved component pipeline/i)).toBeInTheDocument();
 });

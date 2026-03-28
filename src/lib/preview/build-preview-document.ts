@@ -32,6 +32,7 @@ export function buildPreviewDocument(markup: string) {
       body {
         margin: 0;
         min-height: 100%;
+        display: flex;
         background:
           radial-gradient(circle at top, rgba(29, 78, 216, 0.08), transparent 28%),
           linear-gradient(180deg, #f8fafc 0%, #f3f6fb 100%);
@@ -39,17 +40,34 @@ export function buildPreviewDocument(markup: string) {
       }
 
       .preview-shell {
+        flex: 1;
+        width: 100%;
         min-height: 100%;
+        display: flex;
         border-radius: 20px;
         border: 1px solid rgba(226, 232, 240, 0.95);
         background: rgba(255, 255, 255, 0.92);
         box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 18px 36px rgba(15, 23, 42, 0.06);
         padding: 24px;
       }
+
+      .preview-content {
+        flex: 1;
+        display: grid;
+        width: 100%;
+        align-content: center;
+        justify-items: center;
+      }
+
+      .preview-content > * {
+        max-width: 100%;
+      }
     </style>
   </head>
   <body>
-    <div class="preview-shell">${safeMarkup}</div>
+    <div class="preview-shell">
+      <div class="preview-content">${safeMarkup}</div>
+    </div>
   </body>
 </html>`;
 }

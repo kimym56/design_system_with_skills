@@ -38,6 +38,26 @@ test("defaults to preview and switches to code", async () => {
   ).not.toBeInTheDocument();
 });
 
+test("uses compact toggle text while preserving dense control sizing", () => {
+  render(
+    <GenerationResultViewer
+      code={`export function Demo() {\n  return <button>Demo</button>;\n}`}
+      markup="<button>Preview demo</button>"
+    />,
+  );
+
+  const previewToggle = screen.getByRole("button", { name: /^preview$/i });
+  const codeToggle = screen.getByRole("button", { name: /^code$/i });
+  const enlargeButton = screen.getByRole("button", {
+    name: /open large preview/i,
+  });
+
+  expect(previewToggle).toHaveClass("px-2", "py-0.5", "text-sm");
+  expect(codeToggle).toHaveClass("px-2", "py-0.5", "text-sm");
+  expect(enlargeButton).toHaveClass("size-7");
+  expect(enlargeButton.querySelector("svg")).toHaveClass("size-3");
+});
+
 test("opens the active mode in a large dialog", async () => {
   const user = userEvent.setup();
 
@@ -70,4 +90,35 @@ test("opens the active mode in a large dialog", async () => {
   expect(
     screen.getAllByRole("button", { name: /copy generated code/i }),
   ).toHaveLength(2);
+});
+
+test("renders a distinct loading preview skeleton for the selected component type", () => {
+  const { rerender } = render(
+    <GenerationResultViewer
+      code={null}
+      markup={null}
+      isLoading
+      componentType="Button"
+    />,
+  );
+
+  expect(screen.getByRole("status").children).toHaveLength(1);
+  expect(screen.getByText(/button silhouette/i)).toBeInTheDocument();
+  expect(screen.queryByText(/^running$/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/generating button component run/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/modal silhouette/i)).not.toBeInTheDocument();
+
+  rerender(
+    <GenerationResultViewer
+      code={null}
+      markup={null}
+      isLoading
+      componentType="Modal"
+    />,
+  );
+
+  expect(screen.getByRole("status").children).toHaveLength(1);
+  expect(screen.getByText(/modal silhouette/i)).toBeInTheDocument();
+  expect(screen.queryByText(/generating modal component run/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/button silhouette/i)).not.toBeInTheDocument();
 });

@@ -135,3 +135,63 @@ test("shows generation validation details when the server rejects the artifact",
 
   vi.unstubAllGlobals();
 });
+
+test("shows a loading placeholder while a generation request is pending", async () => {
+  const user = userEvent.setup();
+  const fetchMock = vi.fn((_input: RequestInfo | URL, init?: RequestInit) => {
+    if (!init) {
+      return Promise.resolve(
+        Response.json({
+          skills: [
+            {
+              id: "skill-1",
+              name: "impeccable",
+              title: "pbakaus/impeccable/impeccable",
+              description: "Design language for sharper frontend output.",
+              githubStars: 14143,
+            },
+          ],
+          quota: {
+            remaining: null,
+            usedToday: 0,
+            limit: null,
+            isUnlimited: true,
+          },
+        }),
+      );
+    }
+
+    return new Promise<Response>(() => {});
+  }) as unknown as typeof fetch;
+
+  vi.stubGlobal("fetch", fetchMock);
+
+  render(<CreateGenerationForm />);
+
+  await screen.findByRole("button", { name: /select skills/i });
+
+  await user.click(
+    screen.getByRole("button", { name: /component type button/i }),
+  );
+  await user.click(screen.getByText(/^input$/i));
+
+  await user.click(screen.getByRole("button", { name: /select skills/i }));
+  await user.click(
+    await screen.findByText(/pbakaus\/impeccable\/impeccable/i),
+  );
+  await user.click(screen.getByRole("button", { name: /generate run/i }));
+
+  const status = await screen.findByRole("status");
+
+  expect(status.children).toHaveLength(1);
+  expect(await screen.findByText(/input silhouette/i)).toBeInTheDocument();
+  expect(screen.queryByText(/^running$/i)).not.toBeInTheDocument();
+  expect(
+    screen.queryByText(/generating input component run/i),
+  ).not.toBeInTheDocument();
+  expect(
+    screen.queryByText(/assembling preview and code surfaces for this request\./i),
+  ).not.toBeInTheDocument();
+
+  vi.unstubAllGlobals();
+});

@@ -1,5 +1,7 @@
 import { CreateGenerationForm } from "@/components/create-generation-form";
 
+export const dynamic = "force-dynamic";
+
 export default function WorkspacePage() {
   return (
     <main className="space-y-4">

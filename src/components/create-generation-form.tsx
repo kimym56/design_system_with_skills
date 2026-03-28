@@ -79,6 +79,7 @@ export function CreateGenerationForm() {
   const [error, setError] = useState<FormErrorState | null>(null);
   const [isLoadingSkills, setIsLoadingSkills] = useState(true);
   const [isGenerating, startGenerationTransition] = useTransition();
+  const isSubmissionLocked = isGenerating || isLoadingSkills;
 
   useEffect(() => {
     let active = true;
@@ -134,6 +135,7 @@ export function CreateGenerationForm() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setGeneration(null);
 
     startGenerationTransition(async () => {
       try {
@@ -184,7 +186,7 @@ export function CreateGenerationForm() {
     <div className="space-y-4">
       <section>
         <Card className="shadow-none">
-          <CardHeader className="bg-white">
+          <CardHeader className="rounded-t-[15px] bg-white">
             <div className="flex flex-wrap items-start justify-between gap-3 sm:items-center">
               <div className="min-w-0 flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
                 <CardTitle>Generation inputs</CardTitle>
@@ -206,9 +208,11 @@ export function CreateGenerationForm() {
                     Component type
                   </p>
                   <ComponentTypeSelect
+                    key={`component-type-${isSubmissionLocked ? "locked" : "ready"}`}
                     value={componentType}
                     onSelect={setComponentType}
                     labelId="component-type-label"
+                    disabled={isSubmissionLocked}
                   />
                 </div>
 
@@ -220,10 +224,12 @@ export function CreateGenerationForm() {
                     Approved skills
                   </p>
                   <SkillMultiSelect
+                    key={`approved-skills-${isSubmissionLocked ? "locked" : "ready"}`}
                     options={skills}
                     selectedIds={selectedSkillIds}
                     onToggle={toggleSkill}
                     labelId="approved-skills-label"
+                    disabled={isSubmissionLocked}
                   />
                 </div>
 
@@ -232,7 +238,7 @@ export function CreateGenerationForm() {
                     type="submit"
                     className="w-full justify-between"
                     disabled={
-                      isGenerating || isLoadingSkills || selectedSkillIds.length === 0
+                      isSubmissionLocked || selectedSkillIds.length === 0
                     }
                   >
                     {isGenerating ? "Generating..." : "Generate run"}
@@ -264,6 +270,8 @@ export function CreateGenerationForm() {
         <GenerationResultViewer
           code={generation?.resultCode ?? null}
           markup={generation?.previewPayload?.html ?? null}
+          isLoading={isGenerating}
+          componentType={componentType}
         />
 
         {generation?.rationale ? (

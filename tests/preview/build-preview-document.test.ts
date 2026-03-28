@@ -9,3 +9,11 @@ test("preview document avoids forced viewport-height overflow for inline preview
   expect(documentHtml).toContain("box-sizing: border-box");
   expect(documentHtml).not.toContain("min-height: 100vh");
 });
+
+test("preview document wraps generated markup in a centered stage", () => {
+  const documentHtml = buildPreviewDocument("<button>Demo</button>");
+
+  expect(documentHtml).toContain('class="preview-content"');
+  expect(documentHtml).toContain("justify-items: center");
+  expect(documentHtml).toContain("align-content: center");
+});

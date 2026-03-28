@@ -77,10 +77,3 @@ body {
   background: var(--accent);
   color: var(--foreground);
 }
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}

@@ -2,7 +2,12 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 
+import * as workspacePageModule from "@/app/(app)/workspace/page";
 import WorkspacePage from "@/app/(app)/workspace/page";
+
+test("workspace page forces dynamic rendering to avoid stale prerendered form HTML", () => {
+  expect(workspacePageModule.dynamic).toBe("force-dynamic");
+});
 
 test("workspace page shows the generation builder heading", async () => {
   const user = userEvent.setup();
@@ -61,6 +66,12 @@ test("workspace page shows the generation builder heading", async () => {
     screen.getByRole("heading", { name: /generation inputs/i }).parentElement
       ?.className,
   ).toMatch(/sm:flex/);
+  expect(
+    screen
+      .getByRole("heading", { name: /generation inputs/i })
+      .closest("[class*='bg-white']")
+      ?.className,
+  ).toMatch(/rounded-t-\[15px\]/);
   expect(
     screen.getByRole("heading", { name: /generation inputs/i }).closest(".border-b"),
   ).not.toBeInTheDocument();

@@ -19,11 +19,13 @@ export function SkillMultiSelect({
   selectedIds,
   onToggle,
   labelId,
+  disabled = false,
 }: {
   options: SkillOption[];
   selectedIds: string[];
   onToggle: (skillId: string) => void;
   labelId?: string;
+  disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -82,9 +84,10 @@ export function SkillMultiSelect({
         aria-haspopup="dialog"
         aria-controls={popupId}
         aria-labelledby={labelId ? `${labelId} ${triggerTextId}` : triggerTextId}
+        disabled={disabled}
         onClick={() => setIsOpen((current) => !current)}
         className={cn(
-          "flex h-9 w-full items-center justify-between gap-3 rounded-[10px] border border-input bg-background px-3 text-sm text-foreground shadow-[0_1px_2px_rgba(15,23,42,0.03)] outline-none transition-[border-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          "flex h-9 w-full items-center justify-between gap-3 rounded-[10px] border border-input bg-background px-3 text-sm text-foreground shadow-[0_1px_2px_rgba(15,23,42,0.03)] outline-none transition-[border-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:bg-muted/40 disabled:text-muted-foreground",
           selectedOptions.length > 0 ? "border-border" : "text-muted-foreground",
         )}
       >
@@ -129,6 +132,7 @@ export function SkillMultiSelect({
                   <input
                     type="checkbox"
                     checked={active}
+                    disabled={disabled}
                     onChange={() => onToggle(skill.id)}
                     className="sr-only"
                   />

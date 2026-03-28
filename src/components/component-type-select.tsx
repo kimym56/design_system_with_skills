@@ -14,10 +14,12 @@ export function ComponentTypeSelect({
   value,
   onSelect,
   labelId,
+  disabled = false,
 }: {
   value: CoreComponentType;
   onSelect: (value: CoreComponentType) => void;
   labelId?: string;
+  disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -63,8 +65,9 @@ export function ComponentTypeSelect({
         aria-haspopup="dialog"
         aria-controls={popupId}
         aria-labelledby={labelId ? `${labelId} ${triggerTextId}` : triggerTextId}
+        disabled={disabled}
         onClick={() => setIsOpen((current) => !current)}
-        className="flex h-9 w-full items-center justify-between gap-3 rounded-[10px] border border-input bg-background px-3 text-sm text-foreground shadow-[0_1px_2px_rgba(15,23,42,0.03)] outline-none transition-[border-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="flex h-9 w-full items-center justify-between gap-3 rounded-[10px] border border-input bg-background px-3 text-sm text-foreground shadow-[0_1px_2px_rgba(15,23,42,0.03)] outline-none transition-[border-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:bg-muted/40 disabled:text-muted-foreground"
       >
         <span id={triggerTextId} className="min-w-0 truncate text-left">
           {value}
@@ -93,10 +96,12 @@ export function ComponentTypeSelect({
                   key={componentType}
                   type="button"
                   aria-pressed={active}
+                  disabled={disabled}
                   onClick={() => handleSelect(componentType)}
                   className={cn(
                     "flex w-full items-start gap-3 rounded-[10px] px-3 py-3 text-left transition-[background-color,border-color]",
                     active ? "bg-accent/50" : "bg-white hover:bg-secondary/60",
+                    "disabled:cursor-not-allowed disabled:opacity-60",
                   )}
                 >
                   <div className="min-w-0 flex-1 space-y-1">

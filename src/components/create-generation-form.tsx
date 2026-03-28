@@ -11,11 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  CORE_COMPONENT_TYPES,
-  type CoreComponentType,
-} from "@/lib/catalog/component-types";
+import { type CoreComponentType } from "@/lib/catalog/component-types";
 import { GenerationResultViewer } from "@/components/generation-result-viewer";
+import { ComponentTypeSelect } from "@/components/component-type-select";
 import { SkillMultiSelect } from "@/components/skill-multi-select";
 
 type SkillOption = {
@@ -41,13 +39,44 @@ type GenerationPayload = {
   rationale?: string | null;
 };
 
+type FormErrorState = {
+  message: string;
+  details: string[];
+};
+
+function getFormErrorState(payload: unknown, fallbackMessage: string): FormErrorState {
+  if (!payload || typeof payload !== "object") {
+    return {
+      message: fallbackMessage,
+      details: [],
+    };
+  }
+
+  const payloadRecord = payload as {
+    error?: unknown;
+    details?: unknown;
+  };
+
+  return {
+    message:
+      typeof payloadRecord.error === "string"
+        ? payloadRecord.error
+        : fallbackMessage,
+    details: Array.isArray(payloadRecord.details)
+      ? payloadRecord.details.filter(
+          (detail): detail is string => typeof detail === "string",
+        )
+      : [],
+  };
+}
+
 export function CreateGenerationForm() {
   const [skills, setSkills] = useState<SkillOption[]>([]);
   const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([]);
   const [componentType, setComponentType] = useState<CoreComponentType>("Button");
   const [quota, setQuota] = useState<QuotaPayload | null>(null);
   const [generation, setGeneration] = useState<GenerationPayload | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<FormErrorState | null>(null);
   const [isLoadingSkills, setIsLoadingSkills] = useState(true);
   const [isGenerating, startGenerationTransition] = useTransition();
 
@@ -64,7 +93,7 @@ export function CreateGenerationForm() {
         }
 
         if (!response.ok) {
-          setError(payload.error ?? "Unable to load skills.");
+          setError(getFormErrorState(payload, "Unable to load skills."));
           return;
         }
 
@@ -72,11 +101,13 @@ export function CreateGenerationForm() {
         setQuota(payload.quota);
       } catch (requestError) {
         if (active) {
-          setError(
-            requestError instanceof Error
-              ? requestError.message
-              : "Unable to load skills.",
-          );
+          setError({
+            message:
+              requestError instanceof Error
+                ? requestError.message
+                : "Unable to load skills.",
+            details: [],
+          });
         }
       } finally {
         if (active) {
@@ -120,7 +151,7 @@ export function CreateGenerationForm() {
 
         if (!response.ok) {
           setGeneration(null);
-          setError(payload.error ?? "Generation failed.");
+          setError(getFormErrorState(payload, "Generation failed."));
           if (payload.quota) {
             setQuota(payload.quota);
           }
@@ -130,11 +161,13 @@ export function CreateGenerationForm() {
         setGeneration(payload.generation);
         setQuota(payload.quota);
       } catch (requestError) {
-        setError(
-          requestError instanceof Error
-            ? requestError.message
-            : "Generation failed.",
-        );
+        setError({
+          message:
+            requestError instanceof Error
+              ? requestError.message
+              : "Generation failed.",
+          details: [],
+        });
       }
     });
   }
@@ -166,26 +199,17 @@ export function CreateGenerationForm() {
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="flex flex-col gap-3 xl:flex-row xl:items-end">
                 <div className="space-y-2 xl:w-[220px]">
-                  <label
-                    htmlFor="component-type"
+                  <p
+                    id="component-type-label"
                     className="text-sm font-medium text-foreground"
                   >
                     Component type
-                  </label>
-                  <select
-                    id="component-type"
+                  </p>
+                  <ComponentTypeSelect
                     value={componentType}
-                    onChange={(event) =>
-                      setComponentType(event.target.value as CoreComponentType)
-                    }
-                    className="h-9 w-full rounded-[10px] border border-input bg-background px-3 py-2 text-sm text-foreground shadow-[0_1px_2px_rgba(15,23,42,0.03)] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                  >
-                    {CORE_COMPONENT_TYPES.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
+                    onSelect={setComponentType}
+                    labelId="component-type-label"
+                  />
                 </div>
 
                 <div className="min-w-0 flex-1 space-y-2">
@@ -219,7 +243,16 @@ export function CreateGenerationForm() {
 
               {error ? (
                 <div className="rounded-[12px] border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-                  {error}
+                  <p>{error.message}</p>
+                  {error.details.length > 0 ? (
+                    <ul className="mt-2 space-y-1 text-xs leading-5 text-destructive/90">
+                      {error.details.map((detail) => (
+                        <li key={detail} className="break-words">
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </div>
               ) : null}
             </form>

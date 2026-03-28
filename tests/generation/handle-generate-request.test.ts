@@ -186,3 +186,60 @@ test("generation requests log the rejected code when code validation fails", asy
 
   warnSpy.mockRestore();
 });
+
+test("generation requests accept code that imports React", async () => {
+  const saveGeneration = vi.fn(async () => ({
+    id: "generation_123",
+  }));
+
+  const response = await handleGenerateRequest(
+    {
+      componentType: "Button",
+      skillIds: ["skill_1"],
+    },
+    {
+      resolveActor: async () => ({
+        actor: {
+          type: "guest",
+          guestId: "guest_123",
+          isNewGuest: false,
+        },
+        cookieToSet: null,
+      }),
+      getQuotaStatus: async () => ({
+        allowed: true,
+        remaining: null,
+        limit: null,
+        usedToday: 0,
+        actorId: "guest_123",
+        isUnlimited: true,
+      }),
+      getSkills: async () => [
+        {
+          id: "skill_1",
+          name: "Editorial Skill",
+          styleCues: ["crisp", "quiet"],
+        },
+      ],
+      recordUsage: async () => undefined,
+      generateComponent: async () => ({
+        componentName: "Button",
+        code: [
+          "import * as React from 'react';",
+          "",
+          "type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;",
+          "",
+          "export default function Button(props: ButtonProps) {",
+          "  return <button {...props}>Press</button>;",
+          "}",
+        ].join("\n"),
+        previewMarkup: "<button>Press</button>",
+        rationale: "Uses selected skill.",
+      }),
+      saveGeneration,
+    },
+  );
+
+  expect(response.status).toBe(200);
+  expect(saveGeneration).toHaveBeenCalledOnce();
+});

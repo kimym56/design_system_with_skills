@@ -2,7 +2,7 @@ const disallowedPatterns = [
   /\bfetch\s*\(/,
   /\baxios\b/,
   /\bfrom\s+["']axios["']/,
-  /\bfrom\s+["'][^"./][^"']*["']/,
+  /\bfrom\s+["'](?!react["'])(?!\.\.?\/)(?!\/)[^"']+["']/,
   /\bprocess\./,
   /\blocalStorage\b/,
   /\bsessionStorage\b/,

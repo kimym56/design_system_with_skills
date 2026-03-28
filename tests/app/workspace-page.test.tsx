@@ -47,7 +47,10 @@ test("workspace page shows the generation builder heading", async () => {
     screen.queryByText(/primary and secondary call-to-action controls\./i),
   ).not.toBeInTheDocument();
   expect(screen.queryByText(/published catalog only\./i)).not.toBeInTheDocument();
-  expect(screen.getByRole("combobox", { name: /component type/i })).toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: /component type button/i }),
+  ).toBeInTheDocument();
+  expect(screen.queryByRole("combobox", { name: /component type/i })).not.toBeInTheDocument();
   expect(
     await screen.findByRole("button", { name: /select skills/i }),
   ).toBeInTheDocument();
@@ -60,6 +63,23 @@ test("workspace page shows the generation builder heading", async () => {
   ).toMatch(/sm:flex/);
   expect(
     screen.getByRole("heading", { name: /generation inputs/i }).closest(".border-b"),
+  ).not.toBeInTheDocument();
+
+  await user.click(
+    screen.getByRole("button", { name: /component type button/i }),
+  );
+
+  expect(
+    screen.getByText(/single-line text fields for forms and search\./i),
+  ).toBeInTheDocument();
+
+  await user.click(screen.getByText(/^input$/i));
+
+  expect(
+    screen.getByRole("button", { name: /component type input/i }),
+  ).toBeInTheDocument();
+  expect(
+    screen.queryByText(/single-line text fields for forms and search\./i),
   ).not.toBeInTheDocument();
 
   await user.click(screen.getByRole("button", { name: /select skills/i }));

@@ -7,7 +7,7 @@ test("generation input includes the selected component type and normalized skill
     componentType: "Button",
     skills: [
       { name: "minimalist-ui", styleCues: ["minimal", "clean"] },
-      { name: "design-taste-frontend", styleCues: ["bold", "structured"] },
+      { name: "taste-skill", styleCues: ["bold", "structured"] },
     ],
   });
 

@@ -1,7 +1,15 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, SkillPublishStatus, SkillSourceType } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
+import {
+  buildSeededSkillData,
+  getLegacySeededSlugs,
+  type LockedSkillEntry,
+} from "../src/lib/catalog/seeded-skill";
+import { loadCliEnv } from "../src/lib/load-cli-env";
 import skillsLock from "../skills-lock.json";
+
+loadCliEnv();
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -16,14 +24,7 @@ const prisma = new PrismaClient({
 });
 
 type SkillsLockFile = {
-  skills: Record<
-    string,
-    {
-      source: string;
-      sourceType: string;
-      computedHash: string;
-    }
-  >;
+  skills: Record<string, LockedSkillEntry>;
 };
 
 async function seedCatalogRules() {
@@ -48,39 +49,42 @@ async function seedCatalogRules() {
 async function seedSkills() {
   const entries = Object.entries((skillsLock as SkillsLockFile).skills);
 
-  for (const [name, skill] of entries) {
-    const [repoOwner, repoName] = skill.source.split("/");
+  for (const [slug, skill] of entries) {
+    const seedData = buildSeededSkillData({ slug, skill });
+    const legacySlugs = getLegacySeededSlugs({ slug, skill });
+
+    for (const legacySlug of legacySlugs) {
+      const existingCanonicalSkill = await prisma.skill.findUnique({
+        where: { slug: seedData.slug },
+        select: { id: true },
+      });
+
+      if (existingCanonicalSkill) {
+        break;
+      }
+
+      const legacySkill = await prisma.skill.findUnique({
+        where: { slug: legacySlug },
+        select: { id: true, sourceRepo: true },
+      });
+
+      if (legacySkill?.sourceRepo !== skill.source) {
+        continue;
+      }
+
+      await prisma.skill.update({
+        where: { slug: legacySlug },
+        data: { slug: seedData.slug },
+      });
+    }
 
     await prisma.skill.upsert({
-      where: { slug: name },
+      where: { slug: seedData.slug },
       update: {
-        name,
-        sourceRepo: skill.source,
-        repoUrl: `https://github.com/${skill.source}`,
-        repoOwner,
-        repoName,
-        sourceType: SkillSourceType.SEEDED,
-        publishStatus: SkillPublishStatus.PUBLISHED,
-        computedHash: skill.computedHash,
-        hasReadme: true,
-        topics: ["ui", "ux", "design-system"],
-        normalizedTags: [name],
-        styleCues: name.split("-"),
+        ...seedData,
       },
       create: {
-        name,
-        slug: name,
-        sourceRepo: skill.source,
-        repoUrl: `https://github.com/${skill.source}`,
-        repoOwner,
-        repoName,
-        sourceType: SkillSourceType.SEEDED,
-        publishStatus: SkillPublishStatus.PUBLISHED,
-        computedHash: skill.computedHash,
-        hasReadme: true,
-        topics: ["ui", "ux", "design-system"],
-        normalizedTags: [name],
-        styleCues: name.split("-"),
+        ...seedData,
       },
     });
   }

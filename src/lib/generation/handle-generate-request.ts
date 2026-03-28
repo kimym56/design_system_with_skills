@@ -8,6 +8,7 @@ import {
 import { CORE_COMPONENT_TYPES } from "@/lib/catalog/component-types";
 import { buildGenerationInput } from "@/lib/generation/build-generation-input";
 import { generateComponentArtifact } from "@/lib/generation/openai-client";
+import { validatePreviewMarkup } from "@/lib/generation/validate-preview-markup";
 import {
   getUserQuotaStatus,
   recordGenerationUsage,
@@ -140,8 +141,40 @@ export async function handleGenerateRequest(
   const validation = validateGeneratedCode(generated.code);
 
   if (!validation.ok) {
+    console.warn("Generated code failed validation.", {
+      errors: validation.errors,
+      code: generated.code,
+      componentType: parsedBody.data.componentType,
+      skillIds: parsedBody.data.skillIds,
+      actorType: actor.type,
+    });
+
     return Response.json(
       { error: "Generated code failed validation.", details: validation.errors },
+      { status: 422 },
+    );
+  }
+
+  const previewValidation = validatePreviewMarkup(
+    generated.code,
+    generated.previewMarkup,
+  );
+
+  if (!previewValidation.ok) {
+    console.warn("Generated preview failed validation.", {
+      errors: previewValidation.errors,
+      code: generated.code,
+      previewMarkup: generated.previewMarkup,
+      componentType: parsedBody.data.componentType,
+      skillIds: parsedBody.data.skillIds,
+      actorType: actor.type,
+    });
+
+    return Response.json(
+      {
+        error: "Generated preview failed validation.",
+        details: previewValidation.errors,
+      },
       { status: 422 },
     );
   }

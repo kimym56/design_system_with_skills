@@ -33,7 +33,7 @@ const workflowSteps = [
   },
 ];
 
-const selectedSkills = ["minimalist-ui", "design-taste-frontend", "stitch-design-taste"];
+const selectedSkills = ["minimalist-skill", "taste-skill", "stitch-skill"];
 
 const codeSample = [
   "export function SkillButton() {",

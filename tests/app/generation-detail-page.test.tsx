@@ -52,7 +52,16 @@ test("generation detail page shows the saved run summary", async () => {
   expect(
     await screen.findByRole("heading", { name: /button/i }),
   ).toBeInTheDocument();
-  expect(await screen.findByText(/saved run summary/i)).toBeInTheDocument();
+
+  const summaryHeading = await screen.findByRole("heading", {
+    name: /saved run summary/i,
+  });
+
+  expect(summaryHeading.parentElement?.className).toMatch(/border-b/);
+  expect(summaryHeading.parentElement?.className).toMatch(/sm:p-6/);
+  expect(
+    summaryHeading.closest("[class*='rounded-\\[16px\\]']")?.className,
+  ).toMatch(/overflow-hidden/);
 
   vi.unstubAllGlobals();
 });

@@ -14,9 +14,10 @@ test("workspace page shows the generation builder heading", async () => {
         skills: [
           {
             id: "skill-1",
-            name: "minimalist-ui",
-            description: "Minimal interface treatment",
-            githubStars: 120,
+            name: "impeccable",
+            title: "pbakaus/impeccable/impeccable",
+            description: "Design language for sharper frontend output.",
+            githubStars: 14143,
           },
         ],
         quota: {
@@ -42,15 +43,42 @@ test("workspace page shows the generation builder heading", async () => {
   ).toBeInTheDocument();
   expect(screen.queryByText(/approved catalog/i)).not.toBeInTheDocument();
   expect(screen.queryByText(/curated inputs only/i)).not.toBeInTheDocument();
+  expect(
+    screen.queryByText(/primary and secondary call-to-action controls\./i),
+  ).not.toBeInTheDocument();
+  expect(screen.queryByText(/published catalog only\./i)).not.toBeInTheDocument();
   expect(screen.getByRole("combobox", { name: /component type/i })).toBeInTheDocument();
   expect(
     await screen.findByRole("button", { name: /select skills/i }),
   ).toBeInTheDocument();
-  expect(screen.queryByText(/minimalist-ui/i)).not.toBeInTheDocument();
+  expect(
+    screen.queryByText(/pbakaus\/impeccable\/impeccable/i),
+  ).not.toBeInTheDocument();
+  expect(
+    screen.getByRole("heading", { name: /generation inputs/i }).parentElement
+      ?.className,
+  ).toMatch(/sm:flex/);
+  expect(
+    screen.getByRole("heading", { name: /generation inputs/i }).closest(".border-b"),
+  ).not.toBeInTheDocument();
 
   await user.click(screen.getByRole("button", { name: /select skills/i }));
 
-  expect(await screen.findByText(/minimalist-ui/i)).toBeInTheDocument();
+  expect(
+    await screen.findByText(/pbakaus\/impeccable\/impeccable/i),
+  ).toBeInTheDocument();
+  expect(screen.getByText(/14\.1k stars/i)).toBeInTheDocument();
+  expect(screen.queryByText(/14143 stars/i)).not.toBeInTheDocument();
+  await user.click(screen.getByText(/pbakaus\/impeccable\/impeccable/i));
+  expect(
+    screen.getByRole("button", { name: /pbakaus\/impeccable\/impeccable/i }),
+  ).toBeInTheDocument();
+  expect(
+    screen
+      .getByRole("heading", { name: /generation inputs/i })
+      .closest("[class*='rounded-[16px]']")
+      ?.className,
+  ).not.toMatch(/overflow-hidden/);
   expect(screen.getByRole("heading", { name: /preview/i })).toBeInTheDocument();
   expect(
     screen.getByRole("heading", { name: /generated code/i }),

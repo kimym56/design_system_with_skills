@@ -2,6 +2,10 @@ import {
   applyGuestCookie,
   resolveCurrentRequestActor,
 } from "@/lib/auth/request-actor";
+import {
+  buildSkillTitle,
+  sortPresentedSkills,
+} from "@/lib/catalog/skill-presentation";
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -13,18 +17,28 @@ export async function GET() {
     where: {
       publishStatus: "PUBLISHED",
     },
-    orderBy: [{ githubStars: "desc" }, { name: "asc" }],
     select: {
       id: true,
       name: true,
       description: true,
       githubStars: true,
+      repoName: true,
+      sourceRepo: true,
+      readmeContent: true,
     },
   });
 
+  const presentedSkills = sortPresentedSkills(skills).map((skill) => ({
+    id: skill.id,
+    name: skill.name,
+    title: buildSkillTitle(skill),
+    description: skill.description,
+    githubStars: skill.githubStars,
+  }));
+
   return applyGuestCookie(
     Response.json({
-      skills,
+      skills: presentedSkills,
       quota: {
         allowed: true,
         remaining: null,

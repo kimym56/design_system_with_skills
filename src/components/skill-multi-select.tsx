@@ -3,11 +3,13 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 
+import { formatGitHubStars } from "@/lib/catalog/format-github-stars";
 import { cn } from "@/lib/utils";
 
 type SkillOption = {
   id: string;
   name: string;
+  title: string;
   description: string | null;
   githubStars: number;
 };
@@ -69,7 +71,7 @@ export function SkillMultiSelect({
     selectedOptions.length === 0
       ? "Select skills"
       : selectedOptions.length === 1
-        ? selectedOptions[0].name
+        ? selectedOptions[0].title
         : `${selectedOptions.length} skills selected`;
 
   return (
@@ -133,10 +135,10 @@ export function SkillMultiSelect({
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex items-start justify-between gap-3">
                       <span className="truncate text-sm font-medium tracking-[-0.01em] text-foreground">
-                        {skill.name}
+                        {skill.title}
                       </span>
                       <span className="shrink-0 text-xs text-muted-foreground">
-                        {skill.githubStars} stars
+                        {formatGitHubStars(skill.githubStars)} stars
                       </span>
                     </div>
                     <p className="text-sm leading-5 text-muted-foreground">

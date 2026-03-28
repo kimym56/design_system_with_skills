@@ -8,7 +8,13 @@ import { ArrowLeft } from "lucide-react";
 import { GenerationCodePanel } from "@/components/generation-code-panel";
 import { GenerationPreviewFrame } from "@/components/generation-preview-frame";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 type GenerationDetail = {
@@ -108,17 +114,15 @@ export default function GenerationDetailPage() {
         </div>
       </header>
 
-      <Card className="shadow-none">
-        <CardContent className="grid gap-4 p-5 lg:grid-cols-[minmax(0,0.56fr)_minmax(0,1fr)]">
-          <div className="space-y-2">
-            <h2 className="text-lg font-semibold tracking-[-0.02em] text-foreground">
-              Saved run summary
-            </h2>
-            <p className="text-sm leading-6 text-muted-foreground">
-              Approved inputs and model output captured for this generation.
-            </p>
-          </div>
-          <div className="space-y-4">
+      <Card className="overflow-hidden shadow-none">
+        <CardHeader className="gap-1 border-b border-border">
+          <CardTitle>Saved run summary</CardTitle>
+          <CardDescription className="max-w-2xl leading-6">
+            Approved inputs and model output captured for this generation.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-x-8 gap-y-5 pt-5 sm:pt-6 lg:grid-cols-[minmax(0,0.38fr)_minmax(0,1fr)]">
+          <div className="space-y-5">
             <div className="space-y-1">
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 Recorded
@@ -134,7 +138,7 @@ export default function GenerationDetailPage() {
               <p className="text-sm text-foreground">{generation.model}</p>
             </div>
           </div>
-          <div className="space-y-3 lg:col-span-2">
+          <div className="space-y-3">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               Approved skills
             </p>

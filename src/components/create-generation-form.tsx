@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  COMPONENT_TYPE_SUMMARIES,
   CORE_COMPONENT_TYPES,
   type CoreComponentType,
 } from "@/lib/catalog/component-types";
@@ -23,6 +22,7 @@ import { SkillMultiSelect } from "@/components/skill-multi-select";
 type SkillOption = {
   id: string;
   name: string;
+  title: string;
   description: string | null;
   githubStars: number;
 };
@@ -151,16 +151,16 @@ export function CreateGenerationForm() {
   return (
     <div className="space-y-4">
       <section>
-        <Card className="overflow-visible shadow-none">
-          <CardHeader className="border-b border-border bg-white">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="space-y-1">
+        <Card className="shadow-none">
+          <CardHeader className="bg-white">
+            <div className="flex flex-wrap items-start justify-between gap-3 sm:items-center">
+              <div className="min-w-0 flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
                 <CardTitle>Generation inputs</CardTitle>
-                <CardDescription>
+                <CardDescription className="max-w-none text-xs sm:text-sm">
                   Choose a component type, select approved skills, and run generation.
                 </CardDescription>
               </div>
-              <p className="text-xs text-muted-foreground">{quotaLabel}</p>
+              <p className="shrink-0 text-xs text-muted-foreground">{quotaLabel}</p>
             </div>
           </CardHeader>
           <CardContent className="pt-4">
@@ -216,11 +216,6 @@ export function CreateGenerationForm() {
                     <ArrowUpRight className="size-4" />
                   </Button>
                 </div>
-              </div>
-
-              <div className="flex flex-col gap-1 border-t border-border pt-3 text-sm leading-5 text-muted-foreground xl:flex-row xl:items-center xl:justify-between">
-                <p>{COMPONENT_TYPE_SUMMARIES[componentType]}</p>
-                <p>Published catalog only.</p>
               </div>
 
               {error ? (

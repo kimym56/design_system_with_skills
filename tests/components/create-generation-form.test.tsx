@@ -72,6 +72,10 @@ test("submits the selected component type in the generation request", async () =
     componentType: "Input",
     skillIds: ["skill-1"],
   });
+  expect(screen.queryByText(/generation rationale/i)).not.toBeInTheDocument();
+  expect(
+    screen.queryByText(/approved skills favored a compact input pattern\./i),
+  ).not.toBeInTheDocument();
 
   vi.unstubAllGlobals();
 });

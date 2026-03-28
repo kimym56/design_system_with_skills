@@ -273,19 +273,6 @@ export function CreateGenerationForm() {
           isLoading={isGenerating}
           componentType={componentType}
         />
-
-        {generation?.rationale ? (
-          <Card className="shadow-none">
-            <CardContent className="p-5 sm:p-6">
-              <p className="text-sm font-medium text-foreground">
-                Generation rationale
-              </p>
-              <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
-                {generation.rationale}
-              </p>
-            </CardContent>
-          </Card>
-        ) : null}
       </section>
     </div>
   );

@@ -1,19 +1,25 @@
 import { render, screen } from "@testing-library/react";
-import AppLayout from "@/app/(app)/layout";
+import { vi } from "vitest";
 
-test("authenticated app layout renders navigation labels", () => {
+import AppLayout from "@/app/(app)/(generation-history)/layout";
+
+vi.mock("@/components/recent-history-list", () => ({
+  RecentHistoryList: () => <div>Mock recent history</div>,
+}));
+
+test("generation-history layout renders the shared left rail", () => {
   render(
     <AppLayout>
       <div>child</div>
     </AppLayout>,
   );
 
-  expect(
-    screen.getAllByRole("link", { name: /workspace/i }).length,
-  ).toBeGreaterThan(0);
-  expect(screen.getByRole("link", { name: /history/i })).toBeInTheDocument();
-  expect(screen.getByText(/approved component pipeline/i)).toBeInTheDocument();
   expect(screen.getByRole("link", { name: /new run/i })).toBeInTheDocument();
+  expect(
+    screen.getByRole("link", { name: /view all history/i }),
+  ).toBeInTheDocument();
+  expect(screen.getByText(/recent runs/i)).toBeInTheDocument();
+  expect(screen.getByText(/mock recent history/i)).toBeInTheDocument();
   expect(screen.queryByText(/open access/i)).not.toBeInTheDocument();
   expect(
     screen.queryByText(/generate from approved skills/i),

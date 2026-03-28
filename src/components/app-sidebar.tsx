@@ -2,79 +2,74 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowUpRight, Clock3, Layers3 } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 
+import { RecentHistoryList } from "@/components/recent-history-list";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
-const navigation = [
-  {
-    href: "/workspace",
-    label: "Workspace",
-    description: "Generate from approved skills",
-    icon: Layers3,
-  },
-  {
-    href: "/history",
-    label: "History",
-    description: "Review saved component runs",
-    icon: Clock3,
-  },
-];
-
 export function AppSidebar() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
+  const isWorkspaceRoute = pathname === "/workspace";
+  const isHistoryRoute = pathname.startsWith("/history");
 
   return (
     <aside className="rounded-[16px] border border-border bg-white px-3 py-3 text-foreground xl:sticky xl:top-4 xl:min-h-[calc(100vh-2rem)]">
-      <div className="flex h-full flex-col gap-5">
+      <div className="flex h-full flex-col gap-4">
+        <div className="space-y-1">
+          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            Design System AI
+          </p>
+          <h2 className="text-sm font-medium tracking-[-0.01em] text-foreground">
+            Generation workspace
+          </h2>
+          <p className="text-sm leading-5 text-muted-foreground">
+            Start a run or revisit saved output without leaving the same working context.
+          </p>
+        </div>
+
         <div className="space-y-3">
-          <div className="space-y-1">
-            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-              Design System AI
-            </p>
-            <h2 className="text-sm font-medium tracking-[-0.01em] text-foreground">
-              Approved component pipeline
-            </h2>
-          </div>
           <Button asChild size="sm" className="w-full justify-between">
-            <Link href="/workspace">
+            <Link
+              href="/workspace"
+              aria-current={isWorkspaceRoute ? "page" : undefined}
+            >
               New run
               <ArrowUpRight className="size-4" />
             </Link>
           </Button>
+          <Link
+            href="/history"
+            aria-current={isHistoryRoute ? "page" : undefined}
+            className={cn(
+              "group flex items-center justify-between rounded-[12px] border px-3 py-2.5 text-sm font-medium tracking-[-0.01em] text-foreground transition-colors",
+              isHistoryRoute
+                ? "border-primary/15 bg-accent"
+                : "border-border bg-secondary/30 hover:bg-secondary",
+            )}
+          >
+            <span>View all history</span>
+            <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+          </Link>
         </div>
 
         <Separator />
 
-        <nav className="space-y-0.5">
-          {navigation.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={pathname === item.href ? "page" : undefined}
-              className={cn(
-                "group flex items-center gap-2.5 rounded-[10px] border px-3 py-2 text-sm transition-[background-color,border-color]",
-                pathname === item.href
-                  ? "border-primary/15 bg-accent text-foreground"
-                  : "border-transparent bg-transparent text-muted-foreground hover:bg-secondary hover:text-foreground",
-              )}
+        <section className="space-y-3" aria-labelledby="recent-runs-heading">
+          <div className="space-y-1">
+            <h3
+              id="recent-runs-heading"
+              className="text-sm font-medium tracking-[-0.01em] text-foreground"
             >
-              <item.icon
-                className={cn(
-                  "size-4 shrink-0 transition-colors",
-                  pathname === item.href
-                    ? "text-primary"
-                    : "text-muted-foreground group-hover:text-foreground",
-                )}
-              />
-              <span className="min-w-0 flex-1 truncate font-medium tracking-[-0.01em]">
-                {item.label}
-              </span>
-            </Link>
-          ))}
-        </nav>
+              Recent runs
+            </h3>
+            <p className="text-xs leading-5 text-muted-foreground">
+              Open a saved generation to inspect the approved inputs and output.
+            </p>
+          </div>
+          <RecentHistoryList />
+        </section>
       </div>
     </aside>
   );

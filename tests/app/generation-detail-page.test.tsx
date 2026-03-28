@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 
-import GenerationDetailPage from "@/app/(app)/history/[generationId]/page";
+import GenerationDetailPage from "@/app/(app)/(generation-history)/history/[generationId]/page";
 
 vi.mock("next/navigation", () => ({
   useParams: () => ({ generationId: "demo-generation" }),

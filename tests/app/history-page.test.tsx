@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
-import HistoryPage from "@/app/(app)/history/page";
+import HistoryPage from "@/app/(app)/(generation-history)/history/page";
 
 test("history page shows a heading and empty-state copy", async () => {
   vi.stubGlobal(

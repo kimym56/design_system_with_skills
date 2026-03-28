@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 
-import * as workspacePageModule from "@/app/(app)/workspace/page";
-import WorkspacePage from "@/app/(app)/workspace/page";
+import * as workspacePageModule from "@/app/(app)/(generation-history)/workspace/page";
+import WorkspacePage from "@/app/(app)/(generation-history)/workspace/page";
 
 test("workspace page forces dynamic rendering to avoid stale prerendered form HTML", () => {
   expect(workspacePageModule.dynamic).toBe("force-dynamic");

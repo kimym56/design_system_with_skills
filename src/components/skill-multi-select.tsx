@@ -60,7 +60,7 @@ export function SkillMultiSelect({
 
   if (options.length === 0) {
     return (
-      <div className="rounded-[12px] border border-dashed border-border bg-muted/50 p-4 text-sm leading-5 text-muted-foreground">
+      <div className="flex min-h-9 items-center rounded-[10px] border border-dashed border-border bg-muted/50 px-3 text-sm text-muted-foreground">
         No approved skills are available yet.
       </div>
     );

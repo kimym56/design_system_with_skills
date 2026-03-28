@@ -74,26 +74,30 @@ export default function GenerationDetailPage() {
 
   if (error) {
     return (
-      <Card className="border-destructive/15 bg-destructive/5 shadow-none">
-        <CardContent className="p-5 text-sm leading-6 text-destructive">
-          {error}
-        </CardContent>
-      </Card>
+      <main className="px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+        <Card className="border-destructive/15 bg-destructive/5 shadow-none">
+          <CardContent className="p-5 text-sm leading-6 text-destructive">
+            {error}
+          </CardContent>
+        </Card>
+      </main>
     );
   }
 
   if (!generation) {
     return (
-      <Card className="shadow-none">
-        <CardContent className="p-6 text-sm leading-6 text-muted-foreground">
-          Loading saved result...
-        </CardContent>
-      </Card>
+      <main className="px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+        <Card className="shadow-none">
+          <CardContent className="p-6 text-sm leading-6 text-muted-foreground">
+            Loading saved result...
+          </CardContent>
+        </Card>
+      </main>
     );
   }
 
   return (
-    <main className="space-y-4">
+    <main className="space-y-4 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
       <header className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">

@@ -2,7 +2,7 @@ import { HistoryList } from "@/components/history-list";
 
 export default function HistoryPage() {
   return (
-    <main className="space-y-4">
+    <main className="space-y-4 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
       <header className="space-y-1.5">
         <h1 className="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
           Saved runs

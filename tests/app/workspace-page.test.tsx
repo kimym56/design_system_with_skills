@@ -39,6 +39,10 @@ test("workspace page shows the generation builder heading", async () => {
     screen.getByRole("heading", { name: /run a component generation/i }),
   ).toBeInTheDocument();
   expect(
+    screen.getByRole("heading", { name: /run a component generation/i }).closest("main")
+      ?.className,
+  ).toMatch(/px-4/);
+  expect(
     screen.getByText(
       /select a component, choose approved skills, and review the output before saving the run/i,
     ),

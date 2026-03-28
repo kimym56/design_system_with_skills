@@ -20,9 +20,12 @@ afterEach(() => {
 test("shows the focused workspace rail on the generation page", () => {
   pathname = "/workspace";
 
-  render(<AppSidebar />);
+  render(<AppSidebar className="test-sidebar-frame" />);
 
   expect(screen.getByText(/design system ai/i)).toBeInTheDocument();
+  expect(screen.getByRole("complementary")).toHaveClass("test-sidebar-frame");
+  expect(screen.getByRole("complementary")).not.toHaveClass("rounded-[16px]");
+  expect(screen.getByRole("complementary")).not.toHaveClass("border");
   expect(screen.getByRole("link", { name: /new run/i })).toHaveAttribute(
     "href",
     "/workspace",

@@ -55,6 +55,9 @@ test("generation detail page shows the saved run summary", async () => {
   expect(
     await screen.findByRole("heading", { name: /button/i }),
   ).toBeInTheDocument();
+  expect(
+    screen.getByRole("heading", { name: /button/i }).closest("main")?.className,
+  ).toMatch(/px-4/);
 
   const summaryHeading = await screen.findByRole("heading", {
     name: /saved run summary/i,

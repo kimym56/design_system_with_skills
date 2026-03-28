@@ -18,6 +18,9 @@ test("history page shows a heading and empty-state copy", async () => {
     screen.getByRole("heading", { name: /saved runs/i }),
   ).toBeInTheDocument();
   expect(
+    screen.getByRole("heading", { name: /saved runs/i }).closest("main")?.className,
+  ).toMatch(/px-4/);
+  expect(
     await screen.findByText(/no runs yet/i),
   ).toBeInTheDocument();
 

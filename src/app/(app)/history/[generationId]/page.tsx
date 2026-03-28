@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
-import { GenerationCodePanel } from "@/components/generation-code-panel";
-import { GenerationPreviewFrame } from "@/components/generation-preview-frame";
+import { GenerationResultViewer } from "@/components/generation-result-viewer";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -157,31 +156,10 @@ export default function GenerationDetailPage() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
-        <Card className="shadow-none">
-          <div className="border-b border-border px-5 py-4">
-            <h2 className="text-lg font-semibold tracking-[-0.02em] text-foreground">
-              Preview
-            </h2>
-          </div>
-          <CardContent className="pt-5">
-            <GenerationPreviewFrame
-              markup={generation.previewPayload?.html ?? null}
-            />
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-none">
-          <div className="border-b border-border px-5 py-4">
-            <h2 className="text-lg font-semibold tracking-[-0.02em] text-foreground">
-              Generated code
-            </h2>
-          </div>
-          <CardContent className="pt-5">
-            <GenerationCodePanel code={generation.resultCode} />
-          </CardContent>
-        </Card>
-      </div>
+      <GenerationResultViewer
+        code={generation.resultCode}
+        markup={generation.previewPayload?.html ?? null}
+      />
     </main>
   );
 }

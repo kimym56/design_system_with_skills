@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 
 import GenerationDetailPage from "@/app/(app)/history/[generationId]/page";
@@ -21,6 +22,8 @@ test("generation detail page shows editorial loading copy before data arrives", 
 });
 
 test("generation detail page shows the saved run summary", async () => {
+  const user = userEvent.setup();
+
   vi.stubGlobal(
     "fetch",
     vi.fn(async () =>
@@ -62,6 +65,24 @@ test("generation detail page shows the saved run summary", async () => {
   expect(
     summaryHeading.closest("[class*='rounded-\\[16px\\]']")?.className,
   ).toMatch(/overflow-hidden/);
+  expect(
+    screen.getByRole("heading", { name: /generated result/i }),
+  ).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: /^preview$/i })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  expect(
+    screen.getByRole("button", { name: /open large preview/i }),
+  ).toBeInTheDocument();
+
+  await user.click(screen.getByRole("button", { name: /^code$/i }));
+
+  expect(screen.getByText("export")).toHaveAttribute("data-token-type", "keyword");
+  expect(
+    screen.getByRole("button", { name: /copy generated code/i }),
+  ).toBeInTheDocument();
+  expect(screen.getByText(/generated-component\.tsx/i)).toBeInTheDocument();
 
   vi.unstubAllGlobals();
 });

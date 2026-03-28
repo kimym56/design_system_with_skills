@@ -14,6 +14,10 @@ export function buildPreviewDocument(markup: string) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
       :root {
         color-scheme: light;
         font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -21,17 +25,21 @@ export function buildPreviewDocument(markup: string) {
         color: #0f172a;
       }
 
+      html {
+        height: 100%;
+      }
+
       body {
         margin: 0;
-        min-height: 100vh;
+        min-height: 100%;
         background:
           radial-gradient(circle at top, rgba(29, 78, 216, 0.08), transparent 28%),
           linear-gradient(180deg, #f8fafc 0%, #f3f6fb 100%);
-        padding: 20px;
+        padding: 16px;
       }
 
       .preview-shell {
-        min-height: calc(100vh - 40px);
+        min-height: 100%;
         border-radius: 20px;
         border: 1px solid rgba(226, 232, 240, 0.95);
         background: rgba(255, 255, 255, 0.92);

@@ -79,9 +79,22 @@ test("workspace page shows the generation builder heading", async () => {
       .closest("[class*='rounded-[16px]']")
       ?.className,
   ).not.toMatch(/overflow-hidden/);
-  expect(screen.getByRole("heading", { name: /preview/i })).toBeInTheDocument();
   expect(
-    screen.getByRole("heading", { name: /generated code/i }),
+    screen.getByRole("heading", { name: /generated result/i }),
+  ).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: /^preview$/i })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  expect(screen.getByRole("button", { name: /^code$/i })).toHaveAttribute(
+    "aria-pressed",
+    "false",
+  );
+  expect(
+    screen.getByRole("button", { name: /open large preview/i }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByText(/generated preview appears here after a successful run/i),
   ).toBeInTheDocument();
 
   vi.unstubAllGlobals();

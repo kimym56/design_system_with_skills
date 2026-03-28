@@ -15,8 +15,7 @@ import {
   CORE_COMPONENT_TYPES,
   type CoreComponentType,
 } from "@/lib/catalog/component-types";
-import { GenerationCodePanel } from "@/components/generation-code-panel";
-import { GenerationPreviewFrame } from "@/components/generation-preview-frame";
+import { GenerationResultViewer } from "@/components/generation-result-viewer";
 import { SkillMultiSelect } from "@/components/skill-multi-select";
 
 type SkillOption = {
@@ -228,52 +227,25 @@ export function CreateGenerationForm() {
         </Card>
       </section>
 
-      <div className="grid gap-3 xl:grid-cols-2">
-        <section>
-          <Card className="overflow-hidden shadow-none">
-            <div className="border-b border-border px-5 py-4 sm:px-6">
-              <h2 className="text-lg font-semibold tracking-[-0.02em] text-foreground">
-                Preview
-              </h2>
-              <p className="mt-1 text-sm leading-5 text-muted-foreground">
-                Rendered output inside the isolated preview runtime.
-              </p>
-            </div>
-            <div className="p-5 sm:p-6">
-              <GenerationPreviewFrame
-                markup={generation?.previewPayload?.html ?? null}
-              />
-            </div>
-          </Card>
-        </section>
+      <section className="space-y-3">
+        <GenerationResultViewer
+          code={generation?.resultCode ?? null}
+          markup={generation?.previewPayload?.html ?? null}
+        />
 
-        <section>
-          <Card className="overflow-hidden shadow-none">
-            <div className="border-b border-border px-5 py-4 sm:px-6">
-              <h2 className="text-lg font-semibold tracking-[-0.02em] text-foreground">
-                Generated code
-              </h2>
-              <p className="mt-1 text-sm leading-5 text-muted-foreground">
-                Review the exact code returned for this component run.
+        {generation?.rationale ? (
+          <Card className="shadow-none">
+            <CardContent className="p-5 sm:p-6">
+              <p className="text-sm font-medium text-foreground">
+                Generation rationale
               </p>
-            </div>
-            <div className="p-5 sm:p-6">
-              <GenerationCodePanel code={generation?.resultCode ?? null} />
-            </div>
-
-            {generation?.rationale ? (
-              <div className="border-t border-border px-5 py-4 sm:px-6">
-                <p className="text-sm font-medium text-foreground">
-                  Generation rationale
-                </p>
-                <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
-                  {generation.rationale}
-                </p>
-              </div>
-            ) : null}
+              <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+                {generation.rationale}
+              </p>
+            </CardContent>
           </Card>
-        </section>
-      </div>
+        ) : null}
+      </section>
     </div>
   );
 }

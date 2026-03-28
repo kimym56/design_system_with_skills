@@ -3,11 +3,13 @@
 ## Summary
 
 Redesign the full current app surface into a simple editorial UI that follows a `60/30/10` balance:
+
 - `60% white` for background and primary surfaces
 - `30% black` for typography, borders, and code surfaces
 - `10% cobalt blue` for action, selection, and focus states
 
 The redesign applies to all current routed pages:
+
 - `/`
 - `/workspace`
 - `/history`
@@ -56,8 +58,9 @@ Use the `60/30/10` rule as a system guideline, not as literal CSS percentages.
   - focus rings and links
 
 Proposed palette:
+
 - Background: `#FFFFFF`
-- Surface: `#FAFAFA`
+- Surface: `#fcfcfd`
 - Border: `#D4D4D8`
 - Foreground: `#09090B`
 - Muted text: `#52525B`
@@ -70,6 +73,7 @@ Proposed palette:
 Retain the current Geist font setup already defined in `src/app/layout.tsx`. It is neutral enough for an editorial feel and avoids adding another font-loading dependency during the UI pass.
 
 Typography rules:
+
 - larger headings with tighter tracking
 - short paragraphs and restrained copy width
 - uppercase micro-labels for section framing
@@ -91,6 +95,7 @@ Typography rules:
 ### Authenticated App Shell
 
 `src/app/(app)/layout.tsx` and `src/components/app-sidebar.tsx` will be redesigned into a bright tool shell:
+
 - white outer background
 - light sidebar or rail
 - black dividers and labels
@@ -104,6 +109,7 @@ The shell should feel structured and calm, not like a dark developer console.
 ### Landing Page
 
 `src/app/page.tsx` will use the approved `A: Editorial Frame` direction:
+
 - large editorial hero
 - one primary Google sign-in CTA
 - a short trust strip
@@ -115,6 +121,7 @@ It should stay mostly white, with one dark code area and cobalt only on actions,
 ### Workspace
 
 `src/app/(app)/workspace/page.tsx` and `src/components/create-generation-form.tsx` become a clean two-column builder:
+
 - left column for component selection, skill selection, quota, and action
 - right column for preview and code
 
@@ -123,6 +130,7 @@ The workspace must feel more like a guided editorial tool than a dashboard. The 
 ### History List
 
 `src/app/(app)/history/page.tsx` and `src/components/history-list.tsx` will move to a clean card/list layout:
+
 - strong heading
 - simple empty state
 - reopenable cards with component type, skills, and timestamp
@@ -130,6 +138,7 @@ The workspace must feel more like a guided editorial tool than a dashboard. The 
 ### History Detail
 
 `src/app/(app)/history/[generationId]/page.tsx` will align with the workspace layout:
+
 - editorial header
 - rationale copy
 - light preview surface and dark code surface
@@ -137,6 +146,7 @@ The workspace must feel more like a guided editorial tool than a dashboard. The 
 ## Component System
 
 Add a minimal local UI kit under `src/components/ui` using shadcn conventions:
+
 - `button`
 - `card`
 - `badge`
@@ -159,6 +169,7 @@ The goal is not to flood the repo with components. The goal is to standardize th
 ## Testing Strategy
 
 Update and extend the existing app tests so they validate the new UI contract:
+
 - landing page headline and primary CTA
 - authenticated layout navigation labels
 - workspace heading and supporting copy
@@ -166,6 +177,7 @@ Update and extend the existing app tests so they validate the new UI contract:
 - generation detail page loading and heading behavior, if useful
 
 Continue running:
+
 - `npx vitest run`
 - `npm run lint`
 - `npm run build`

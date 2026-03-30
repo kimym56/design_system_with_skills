@@ -134,15 +134,15 @@ export default async function Home() {
             <div className="grid gap-3 sm:grid-cols-3">
               {evidenceCards.map((item) => (
                 <Card key={item.label} className="shadow-none">
-                  <CardContent
+                  <div
                     data-testid="landing-evidence-card"
-                    className="space-y-1.5 px-3.5 py-3"
+                    className="space-y-1.5 px-3.5 py-3 sm:px-3.5 sm:py-3"
                   >
                     <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
                       {item.label}
                     </p>
                     <p className="text-sm leading-5 text-foreground">{item.body}</p>
-                  </CardContent>
+                  </div>
                 </Card>
               ))}
             </div>

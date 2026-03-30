@@ -71,6 +71,8 @@ test("homepage shows signed-out users explicit Google sign-in buttons", async ()
     expect(card).toHaveClass("space-y-1.5");
     expect(card).toHaveClass("px-3.5");
     expect(card).toHaveClass("py-3");
+    expect(card).toHaveClass("sm:px-3.5");
+    expect(card).toHaveClass("sm:py-3");
   });
   expect(
     screen.queryByText(/proof in the product surface/i),

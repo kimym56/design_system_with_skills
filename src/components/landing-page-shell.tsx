@@ -112,7 +112,7 @@ export function LandingPageShell({ isSignedIn }: LandingPageShellProps) {
         )}
         data-testid="landing-topbar"
       >
-        <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-4 py-6 sm:px-6 lg:px-8">
           <Link
             href="/"
             className="text-[15px] font-semibold tracking-[-0.03em] text-slate-950"
@@ -143,7 +143,7 @@ export function LandingPageShell({ isSignedIn }: LandingPageShellProps) {
       </header>
 
       <div className="mx-auto flex min-h-[calc(100vh-65px)] w-full max-w-[1440px] flex-col px-4 sm:px-6 lg:px-8">
-        <div className="flex-1 py-6 sm:py-8 lg:py-10">
+        <div className="flex-1">
           <section className="grid gap-10 lg:grid-cols-[minmax(0,0.84fr)_minmax(460px,0.96fr)] lg:items-center lg:gap-14">
             <div className="max-w-2xl space-y-6 lg:space-y-7">
               <div className="space-y-4">

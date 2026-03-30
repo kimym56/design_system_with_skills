@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, ShieldCheck } from "lucide-react";
 
 import { getServerAuthSession } from "@/auth";
 import { AccountMenu } from "@/components/auth/account-menu";
@@ -16,35 +16,48 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { toAccountMenuUser } from "@/lib/auth/account-menu-user";
 
-const trustSignals = [
-  "Approved GitHub skill catalog",
-  "Safe isolated preview",
-  "Open access for now",
-];
-
-const workflowSteps = [
+const evidenceCards = [
   {
-    title: "Choose a component",
-    body: "Start with one of the Core 12 components instead of an open-ended prompt.",
+    label: "Shipped surfaces",
+    body: "Workspace, history, and auth states designed as one coherent product system.",
   },
   {
-    title: "Select approved skills",
-    body: "Shape the output with curated UI and UX skills that already passed your catalog rules.",
+    label: "System thinking",
+    body: "Panels, spacing, and state hierarchy stay aligned across public and private routes.",
   },
   {
-    title: "Review code and result",
-    body: "Get a generated component, inspect the code, and compare it against a safe rendered preview.",
+    label: "Code-backed UI",
+    body: "Interface decisions are carried through the actual React and Tailwind implementation.",
   },
 ];
 
-const selectedSkills = ["minimalist-skill", "taste-skill", "stitch-skill"];
+const selectedWork = [
+  {
+    title: "Generation workspace",
+    category: "Input flow",
+    body: "Turns component selection, approved skills, and results into one controlled working surface.",
+  },
+  {
+    title: "Saved runs history",
+    category: "State continuity",
+    body: "Keeps previous generations readable, dense, and easy to revisit without losing context.",
+  },
+];
+
+const operatingPrinciples = [
+  "Design the system state before styling the surface.",
+  "Keep the public route visually related to the authenticated tool.",
+  "Make proof visible in the interface, not only in portfolio copy.",
+];
+
+const specimenSkills = ["layout-system", "interaction", "react"];
 
 const codeSample = [
-  "export function SkillButton() {",
+  "export function WorkspaceEntry() {",
   "  return (",
-  "    <button className=\"rounded-full bg-blue-700 px-5 py-3",
-  "      text-sm font-medium text-white\">",
-  "      Generate component",
+  "    <button className=\"rounded-full bg-primary px-6 py-3",
+  "      text-sm font-medium text-primary-foreground\">",
+  "      Open workspace",
   "    </button>",
   "  );",
   "}",
@@ -56,15 +69,16 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-14 px-4 py-4 sm:px-6 sm:py-6">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 py-4 sm:px-6 sm:py-6">
         <header className="flex flex-col gap-4 rounded-[2rem] border border-border bg-card px-5 py-5 shadow-[0_18px_50px_rgba(9,9,11,0.04)] sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div className="space-y-2">
             <p className="text-xs font-medium uppercase tracking-[0.28em] text-primary">
-              Design System AI
+              Design Engineer Portfolio
             </p>
-            <h1 className="text-2xl font-semibold tracking-[-0.04em] text-foreground">
-              Editorial component builder
-            </h1>
+            <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+              Public entry point for the same product system behind the workspace
+              and saved runs.
+            </p>
           </div>
 
           {accountUser ? (
@@ -77,18 +91,17 @@ export default async function Home() {
           )}
         </header>
 
-        <section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+        <section className="grid gap-6 lg:grid-cols-[1.02fr_0.98fr] lg:items-start">
           <div className="space-y-8">
             <div className="space-y-5">
-              <Badge>Approved skills only</Badge>
+              <Badge variant="secondary">Product-first portfolio</Badge>
               <div className="space-y-4">
-                <h2 className="max-w-4xl text-5xl font-semibold leading-[0.94] tracking-[-0.05em] text-foreground sm:text-6xl lg:text-7xl">
-                  Generate design system components from selected UI skills.
-                </h2>
+                <h1 className="max-w-4xl text-5xl font-semibold leading-[0.94] tracking-[-0.05em] text-foreground sm:text-6xl lg:text-7xl">
+                  Product systems with working surfaces.
+                </h1>
                 <p className="max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
-                  Open access is live right now. Pick a component type, combine
-                  approved GitHub-published UI and UX skills, and review the
-                  result in code and preview before it lands in history.
+                  I design and ship interface systems that stay coherent from
+                  the public entry point to the working product surface.
                 </p>
               </div>
             </div>
@@ -101,7 +114,12 @@ export default async function Home() {
                 </Link>
               </Button>
               {accountUser ? (
-                <AccountMenu user={accountUser} variant="homepage" />
+                <Button asChild size="lg" variant="outline">
+                  <Link href="/history">
+                    View saved runs
+                    <ArrowUpRight className="size-4" />
+                  </Link>
+                </Button>
               ) : (
                 <GoogleSignInButton
                   callbackUrl="/workspace"
@@ -114,29 +132,35 @@ export default async function Home() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
-              {trustSignals.map((signal) => (
-                <Card key={signal} className="shadow-none">
-                  <CardContent className="p-5">
-                    <p className="text-sm leading-6 text-foreground">{signal}</p>
+              {evidenceCards.map((item) => (
+                <Card key={item.label} className="shadow-none">
+                  <CardContent className="space-y-3 p-5">
+                    <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                      {item.label}
+                    </p>
+                    <p className="text-sm leading-6 text-foreground">{item.body}</p>
                   </CardContent>
                 </Card>
               ))}
             </div>
           </div>
 
-          <Card className="overflow-hidden">
+          <Card className="overflow-hidden shadow-none">
             <CardHeader className="space-y-3">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                    Selection
+                    Live workspace specimen
                   </p>
-                  <CardTitle className="mt-2 text-2xl">Button</CardTitle>
+                  <CardTitle className="mt-2 text-2xl">
+                    Proof in the product surface
+                  </CardTitle>
                 </div>
-                <Badge variant="secondary">Ready</Badge>
+                <Badge variant="secondary">Public front door</Badge>
               </div>
               <CardDescription>
-                Generated output stays inside a fixed runtime with a safe preview.
+                The homepage borrows the same panel density as the workspace and
+                history views without pretending to be the app shell.
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -147,7 +171,7 @@ export default async function Home() {
                       Selected skills
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {selectedSkills.map((skill) => (
+                      {specimenSkills.map((skill) => (
                         <Badge key={skill} variant="default">
                           {skill}
                         </Badge>
@@ -156,9 +180,12 @@ export default async function Home() {
                   </div>
 
                   <div className="rounded-[1.25rem] border border-border bg-card p-4">
-                    <div className="flex items-center gap-3">
-                      <ShieldCheck className="size-4 text-primary" />
-                      <p className="text-sm text-foreground">Safe isolated preview</p>
+                    <div className="flex items-start gap-3">
+                      <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
+                      <p className="text-sm leading-6 text-foreground">
+                        Public framing mirrors the product shell instead of
+                        relying on generic marketing proof.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -170,7 +197,7 @@ export default async function Home() {
                         Generated code
                       </p>
                       <span className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                        Next.js
+                        React
                       </span>
                     </div>
                     <pre className="mt-4 overflow-x-auto text-sm leading-6 text-slate-100">
@@ -185,7 +212,7 @@ export default async function Home() {
                     <div className="mt-4 rounded-[1.25rem] border border-border bg-card p-6">
                       <div className="flex justify-center rounded-[1rem] bg-accent px-6 py-10">
                         <button className="rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground">
-                          Generate component
+                          Open workspace
                         </button>
                       </div>
                     </div>
@@ -198,41 +225,64 @@ export default async function Home() {
 
         <Separator />
 
-        <section className="grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
-          <div className="space-y-4">
-            <p className="text-xs font-medium uppercase tracking-[0.28em] text-primary">
-              Simple workflow
-            </p>
-            <h3 className="text-4xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">
-              From selected skills to a saved component in one controlled path.
-            </h3>
-            <p className="max-w-xl text-base leading-8 text-muted-foreground">
-              The landing page explains the system clearly: approved inputs,
-              fixed output target, and a preview environment that stays inside
-              the product boundary.
-            </p>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {workflowSteps.map((step, index) => (
-              <Card key={step.title} className="shadow-none">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <span className="flex size-8 items-center justify-center rounded-full bg-accent text-xs font-semibold text-primary">
-                      0{index + 1}
-                    </span>
-                    <Sparkles className="size-4 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg">{step.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm leading-6 text-muted-foreground">
-                    {step.body}
+        <section className="grid gap-4 lg:grid-cols-[1.08fr_0.92fr]">
+          <Card className="overflow-hidden shadow-none">
+            <CardHeader className="space-y-3">
+              <p className="text-xs font-medium uppercase tracking-[0.28em] text-primary">
+                Selected work
+              </p>
+              <CardTitle className="text-3xl tracking-[-0.04em] sm:text-4xl">
+                A few surfaces carrying the same system language.
+              </CardTitle>
+              <CardDescription className="max-w-2xl">
+                Each surface is designed as part of one working product rather
+                than as isolated portfolio shots.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              {selectedWork.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-[1.25rem] border border-border bg-background p-5"
+                >
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                    {item.category}
                   </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  <h2 className="mt-3 text-xl font-semibold tracking-[-0.03em] text-foreground">
+                    {item.title}
+                  </h2>
+                  <p className="mt-2 max-w-prose text-sm leading-6 text-muted-foreground">
+                    {item.body}
+                  </p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="bg-muted/50 shadow-none">
+            <CardHeader className="space-y-3">
+              <p className="text-xs font-medium uppercase tracking-[0.28em] text-primary">
+                Operating principles
+              </p>
+              <CardTitle className="text-3xl tracking-[-0.04em] sm:text-4xl">
+                Design engineering stays visible in the system choices.
+              </CardTitle>
+              <CardDescription>
+                The public route should explain how the work is made, not only
+                what it looks like.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {operatingPrinciples.map((principle) => (
+                <div
+                  key={principle}
+                  className="rounded-[1.25rem] border border-border bg-card px-4 py-4"
+                >
+                  <p className="text-sm leading-6 text-foreground">{principle}</p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </section>
 
         <Separator />
@@ -240,21 +290,21 @@ export default async function Home() {
         <section className="grid gap-4 rounded-[2rem] border border-border bg-muted/50 px-6 py-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <div className="space-y-4">
             <p className="text-xs font-medium uppercase tracking-[0.28em] text-primary">
-              Direct sign-in CTA
+              Enter the working surface
             </p>
-            <h3 className="max-w-3xl text-4xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">
-              Start with the approved catalog and move straight into the builder.
-            </h3>
+            <h2 className="max-w-3xl text-4xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">
+              The portfolio stays public. The workspace shows the system in its
+              operational state.
+            </h2>
             <p className="max-w-2xl text-base leading-8 text-muted-foreground">
-              Jump straight into the builder today, or sign in with Google if
-              you want to keep using the existing account path while open
-              access is enabled.
+              Move from the public surface into the same product environment
+              that handles generation, review, and saved runs.
             </p>
           </div>
 
           <Button asChild size="lg">
             <Link href="/workspace">
-              Open the builder
+              Enter workspace
               <CheckCircle2 className="size-4" />
             </Link>
           </Button>

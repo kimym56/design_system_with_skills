@@ -31,7 +31,7 @@ test("homepage shows signed-out users explicit Google sign-in buttons", async ()
 
   expect(
     screen.getByRole("heading", {
-      name: /generate design system components from selected ui skills/i,
+      name: /product systems with working surfaces/i,
     }),
   ).toBeInTheDocument();
 
@@ -59,9 +59,9 @@ test("homepage shows signed-out users explicit Google sign-in buttons", async ()
   });
   expect(getServerAuthSessionMock).toHaveBeenCalledTimes(1);
 
-  expect(screen.getByText(/open access is live right now/i)).toBeInTheDocument();
-
-  expect(screen.getByText(/simple workflow/i)).toBeInTheDocument();
+  expect(screen.getByText(/selected work/i)).toBeInTheDocument();
+  expect(screen.getByText(/operating principles/i)).toBeInTheDocument();
+  expect(screen.queryByText(/simple workflow/i)).not.toBeInTheDocument();
 });
 
 test("homepage shows signed-in users an account chip instead of Google sign-in buttons", async () => {
@@ -77,9 +77,8 @@ test("homepage shows signed-in users an account chip instead of Google sign-in b
   render(await Home());
 
   expect(
-    screen.getAllByRole("button", { name: /yongmin kim/i }),
-  ).toHaveLength(2);
-  expect(screen.getAllByText(/^account$/i)).toHaveLength(2);
+    screen.getByRole("button", { name: /yongmin kim/i }),
+  ).toBeInTheDocument();
   expect(
     screen.queryByRole("button", { name: /sign in with google/i }),
   ).not.toBeInTheDocument();

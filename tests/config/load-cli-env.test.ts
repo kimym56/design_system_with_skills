@@ -12,16 +12,22 @@ afterEach(() => {
   delete process.env[TEST_ENV_KEY];
 });
 
-test("loads variables from a project .env file outside the Next runtime", () => {
+test("loads variables from a project .env.local file for local CLI usage", () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "codex-cli-env-"));
   fs.writeFileSync(
     path.join(tempDir, ".env"),
     `${TEST_ENV_KEY}=postgres://example.test/design-system\n`,
+  );
+  fs.writeFileSync(
+    path.join(tempDir, ".env.local"),
+    `${TEST_ENV_KEY}=postgres://example.test/design-system-local\n`,
   );
 
   delete process.env[TEST_ENV_KEY];
 
   loadCliEnv(tempDir);
 
-  expect(process.env[TEST_ENV_KEY]).toBe("postgres://example.test/design-system");
+  expect(process.env[TEST_ENV_KEY]).toBe(
+    "postgres://example.test/design-system-local",
+  );
 });

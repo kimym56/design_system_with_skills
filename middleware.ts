@@ -21,8 +21,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const signInUrl = new URL("/", request.url);
-  signInUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
+  const signInUrl = new URL("/sign-in", request.url);
+  signInUrl.searchParams.set(
+    "callbackUrl",
+    `${request.nextUrl.pathname}${request.nextUrl.search}`,
+  );
 
   return NextResponse.redirect(signInUrl);
 }

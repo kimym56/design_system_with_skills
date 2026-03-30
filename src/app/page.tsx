@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, ShieldCheck, Sparkles } from "lucide-react";
 
+import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,12 +61,10 @@ export default function Home() {
             </h1>
           </div>
 
-          <Button asChild variant="outline">
-            <Link href="/api/auth/signin/google?callbackUrl=%2Fworkspace">
+          <GoogleSignInButton callbackUrl="/workspace" variant="outline">
               Sign in with Google
               <ArrowUpRight className="size-4" />
-            </Link>
-          </Button>
+          </GoogleSignInButton>
         </header>
 
         <section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
@@ -91,11 +90,13 @@ export default function Home() {
                   <ArrowUpRight className="size-4" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/api/auth/signin/google?callbackUrl=%2Fworkspace">
+              <GoogleSignInButton
+                callbackUrl="/workspace"
+                size="lg"
+                variant="outline"
+              >
                   Sign in with Google
-                </Link>
-              </Button>
+              </GoogleSignInButton>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">

@@ -107,7 +107,7 @@ function GenerationResultViewerContent({
 
         <div role="status" aria-live="polite" className="p-5 sm:p-6">
           <div
-            className="rounded-[12px] border border-border bg-card p-4"
+            className="rounded-[var(--radius-card)] border border-border bg-card p-4"
             aria-hidden="true"
           >
             <div className="flex items-center justify-between gap-3">
@@ -117,7 +117,7 @@ function GenerationResultViewerContent({
             <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               {`${selectedComponentType} silhouette`}
             </p>
-            <div className="mt-3 min-h-[220px] rounded-[10px] border border-dashed border-border bg-muted/50 p-4">
+            <div className="mt-3 min-h-[220px] rounded-[var(--radius-control)] border border-dashed border-border bg-muted/50 p-4">
               {renderLoadingPreviewSkeleton(selectedComponentType)}
             </div>
           </div>
@@ -152,7 +152,7 @@ function GenerationResultViewerContent({
               <div
                 role="group"
                 aria-label="Generated result view"
-                className="inline-flex rounded-[9px] border border-border bg-muted/60 p-px"
+                className="inline-flex rounded-[var(--radius-control)] border border-border bg-muted/60 p-px"
               >
                 {VIEW_OPTIONS.map((view) => {
                   const isActive = activeView === view.id;
@@ -163,7 +163,7 @@ function GenerationResultViewerContent({
                       type="button"
                       aria-pressed={isActive}
                       className={cn(
-                        "rounded-[6px] px-2 py-0.5 text-sm font-medium transition-[background-color,color,box-shadow]",
+                        "rounded-[var(--radius-compact)] px-2 py-0.5 text-sm font-medium transition-[background-color,color,box-shadow]",
                         isActive
                           ? "bg-card text-foreground shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
                           : "text-muted-foreground hover:text-foreground",
@@ -203,7 +203,7 @@ function GenerationResultViewerContent({
               role="dialog"
               aria-modal="true"
               aria-label={dialogTitle}
-              className="w-full max-w-[1120px] overflow-hidden rounded-[20px] border border-border bg-card shadow-[0_24px_80px_rgba(15,23,42,0.24)]"
+              className="w-full max-w-[1120px] overflow-hidden rounded-[var(--radius-panel)] border border-border bg-card shadow-[0_24px_80px_rgba(15,23,42,0.24)]"
               onClick={(event) => event.stopPropagation()}
             >
               <div className="flex items-center justify-between gap-4 border-b border-border px-5 py-4 sm:px-6">
@@ -250,7 +250,7 @@ function renderLoadingPreviewSkeleton(componentType: CoreComponentType) {
       return (
         <div className="space-y-4">
           <div className="h-3 w-24 animate-pulse rounded-full bg-primary/15" />
-          <div className="flex h-12 items-center justify-between rounded-[12px] border border-input bg-background px-4">
+          <div className="flex h-12 items-center justify-between rounded-[var(--radius-control)] border border-input bg-background px-4">
             <div className="h-3 w-32 animate-pulse rounded-full bg-foreground/10" />
             <div className="h-4 w-4 animate-pulse rounded-full bg-foreground/10" />
           </div>
@@ -260,11 +260,11 @@ function renderLoadingPreviewSkeleton(componentType: CoreComponentType) {
       return (
         <div className="space-y-4">
           <div className="h-3 w-28 animate-pulse rounded-full bg-primary/15" />
-          <div className="space-y-3 rounded-[14px] border border-input bg-background p-4">
+          <div className="space-y-3 rounded-[var(--radius-card)] border border-input bg-background p-4">
             <div className="h-3 w-5/6 animate-pulse rounded-full bg-foreground/10" />
             <div className="h-3 w-full animate-pulse rounded-full bg-foreground/10" />
             <div className="h-3 w-3/4 animate-pulse rounded-full bg-foreground/10" />
-            <div className="h-16 rounded-[10px] bg-muted/60" />
+            <div className="h-16 rounded-[var(--radius-control)] bg-muted/60" />
           </div>
         </div>
       );
@@ -272,14 +272,14 @@ function renderLoadingPreviewSkeleton(componentType: CoreComponentType) {
       return (
         <div className="space-y-4">
           <div className="h-3 w-24 animate-pulse rounded-full bg-primary/15" />
-          <div className="flex h-12 items-center justify-between rounded-[12px] border border-input bg-background px-4">
+          <div className="flex h-12 items-center justify-between rounded-[var(--radius-control)] border border-input bg-background px-4">
             <div className="h-3 w-28 animate-pulse rounded-full bg-foreground/10" />
             <div className="space-y-1">
               <div className="h-1.5 w-4 rounded-full bg-foreground/10" />
               <div className="h-1.5 w-3 rounded-full bg-foreground/10" />
             </div>
           </div>
-          <div className="space-y-2 rounded-[12px] border border-border bg-card p-3">
+          <div className="space-y-2 rounded-[var(--radius-control)] border border-border bg-card p-3">
             <div className="h-3 w-full animate-pulse rounded-full bg-foreground/8" />
             <div className="h-3 w-4/5 animate-pulse rounded-full bg-foreground/8" />
             <div className="h-3 w-2/3 animate-pulse rounded-full bg-foreground/8" />
@@ -292,7 +292,7 @@ function renderLoadingPreviewSkeleton(componentType: CoreComponentType) {
           {[0, 1, 2].map((index) => (
             <div
               key={index}
-              className="flex items-center gap-3 rounded-[12px] bg-background px-3 py-3"
+              className="flex items-center gap-3 rounded-[var(--radius-control)] bg-background px-3 py-3"
             >
               <div className="size-4 animate-pulse rounded-[5px] border border-input bg-muted/60" />
               <div className="h-3 flex-1 animate-pulse rounded-full bg-foreground/10" />
@@ -306,7 +306,7 @@ function renderLoadingPreviewSkeleton(componentType: CoreComponentType) {
           {[0, 1, 2].map((index) => (
             <div
               key={index}
-              className="flex items-center gap-3 rounded-[12px] bg-background px-3 py-3"
+              className="flex items-center gap-3 rounded-[var(--radius-control)] bg-background px-3 py-3"
             >
               <div className="size-4 animate-pulse rounded-full border border-input bg-muted/60" />
               <div className="h-3 flex-1 animate-pulse rounded-full bg-foreground/10" />
@@ -320,7 +320,7 @@ function renderLoadingPreviewSkeleton(componentType: CoreComponentType) {
           {[0, 1, 2].map((index) => (
             <div
               key={index}
-              className="flex items-center justify-between rounded-[12px] bg-background px-3 py-3"
+              className="flex items-center justify-between rounded-[var(--radius-control)] bg-background px-3 py-3"
             >
               <div className="space-y-2">
                 <div className="h-3 w-28 animate-pulse rounded-full bg-foreground/10" />
@@ -340,32 +340,32 @@ function renderLoadingPreviewSkeleton(componentType: CoreComponentType) {
       );
     case "Card":
       return (
-        <div className="rounded-[16px] border border-border bg-card p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+        <div className="rounded-[var(--radius-card)] border border-border bg-card p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
           <div className="h-4 w-32 animate-pulse rounded-full bg-primary/15" />
           <div className="mt-4 space-y-3">
             <div className="h-3 w-full animate-pulse rounded-full bg-foreground/10" />
             <div className="h-3 w-4/5 animate-pulse rounded-full bg-foreground/10" />
-            <div className="h-16 rounded-[12px] bg-muted/60" />
+            <div className="h-16 rounded-[var(--radius-control)] bg-muted/60" />
           </div>
           <div className="mt-4 flex gap-2">
-            <div className="h-9 w-24 animate-pulse rounded-[10px] bg-foreground/10" />
-            <div className="h-9 w-20 animate-pulse rounded-[10px] bg-primary/20" />
+            <div className="h-9 w-24 animate-pulse rounded-[var(--radius-compact)] bg-foreground/10" />
+            <div className="h-9 w-20 animate-pulse rounded-[var(--radius-compact)] bg-primary/20" />
           </div>
         </div>
       );
     case "Modal":
       return (
-        <div className="flex min-h-[188px] items-center justify-center rounded-[14px] bg-slate-950/5 p-3">
-          <div className="w-full max-w-[220px] rounded-[16px] border border-border bg-card p-4 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
+        <div className="flex min-h-[188px] items-center justify-center rounded-[var(--radius-card)] bg-slate-950/5 p-3">
+          <div className="w-full max-w-[220px] rounded-[var(--radius-card)] border border-border bg-card p-4 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
             <div className="h-4 w-28 animate-pulse rounded-full bg-primary/15" />
             <div className="mt-4 space-y-3">
               <div className="h-3 w-full animate-pulse rounded-full bg-foreground/10" />
               <div className="h-3 w-3/4 animate-pulse rounded-full bg-foreground/10" />
-              <div className="h-12 rounded-[10px] bg-muted/60" />
+              <div className="h-12 rounded-[var(--radius-control)] bg-muted/60" />
             </div>
             <div className="mt-4 flex justify-end gap-2">
-              <div className="h-9 w-16 animate-pulse rounded-[10px] bg-foreground/10" />
-              <div className="h-9 w-20 animate-pulse rounded-[10px] bg-primary/20" />
+              <div className="h-9 w-16 animate-pulse rounded-[var(--radius-compact)] bg-foreground/10" />
+              <div className="h-9 w-20 animate-pulse rounded-[var(--radius-compact)] bg-primary/20" />
             </div>
           </div>
         </div>
@@ -373,16 +373,16 @@ function renderLoadingPreviewSkeleton(componentType: CoreComponentType) {
     case "Tabs":
       return (
         <div className="space-y-4">
-          <div className="flex gap-2 rounded-[12px] bg-background p-1">
-            <div className="h-8 w-20 animate-pulse rounded-[8px] bg-card shadow-[0_1px_2px_rgba(15,23,42,0.06)]" />
-            <div className="h-8 w-16 animate-pulse rounded-[8px] bg-foreground/8" />
-            <div className="h-8 w-[4.5rem] animate-pulse rounded-[8px] bg-foreground/8" />
+          <div className="flex gap-2 rounded-[var(--radius-control)] bg-background p-1">
+            <div className="h-8 w-20 animate-pulse rounded-[var(--radius-compact)] bg-card shadow-[0_1px_2px_rgba(15,23,42,0.06)]" />
+            <div className="h-8 w-16 animate-pulse rounded-[var(--radius-compact)] bg-foreground/8" />
+            <div className="h-8 w-[4.5rem] animate-pulse rounded-[var(--radius-compact)] bg-foreground/8" />
           </div>
-          <div className="space-y-3 rounded-[14px] border border-border bg-card p-4">
+          <div className="space-y-3 rounded-[var(--radius-card)] border border-border bg-card p-4">
             <div className="h-3 w-2/3 animate-pulse rounded-full bg-primary/15" />
             <div className="h-3 w-full animate-pulse rounded-full bg-foreground/10" />
             <div className="h-3 w-4/5 animate-pulse rounded-full bg-foreground/10" />
-            <div className="h-20 rounded-[12px] bg-muted/60" />
+            <div className="h-20 rounded-[var(--radius-control)] bg-muted/60" />
           </div>
         </div>
       );
@@ -392,7 +392,7 @@ function renderLoadingPreviewSkeleton(componentType: CoreComponentType) {
           {[0, 1, 2].map((index) => (
             <div
               key={index}
-              className="rounded-[12px] border border-border bg-background px-4 py-4"
+              className="rounded-[var(--radius-control)] border border-border bg-background px-4 py-4"
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="h-3 flex-1 animate-pulse rounded-full bg-foreground/10" />
@@ -411,7 +411,7 @@ function renderLoadingPreviewSkeleton(componentType: CoreComponentType) {
     case "Navbar":
       return (
         <div className="space-y-4">
-          <div className="flex items-center justify-between rounded-[14px] border border-border bg-card px-4 py-3">
+          <div className="flex items-center justify-between rounded-[var(--radius-card)] border border-border bg-card px-4 py-3">
             <div className="flex items-center gap-3">
               <div className="size-8 animate-pulse rounded-full bg-primary/20" />
               <div className="h-3 w-20 animate-pulse rounded-full bg-foreground/10" />
@@ -423,7 +423,7 @@ function renderLoadingPreviewSkeleton(componentType: CoreComponentType) {
             </div>
             <div className="h-9 w-20 animate-pulse rounded-full bg-primary/20" />
           </div>
-          <div className="h-28 rounded-[14px] bg-muted/60" />
+          <div className="h-28 rounded-[var(--radius-card)] bg-muted/60" />
         </div>
       );
   }

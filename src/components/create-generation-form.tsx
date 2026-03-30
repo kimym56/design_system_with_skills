@@ -186,7 +186,7 @@ export function CreateGenerationForm() {
     <div className="space-y-4">
       <section>
         <Card className="shadow-none">
-          <CardHeader className="rounded-t-[15px] bg-white">
+          <CardHeader className="rounded-t-[calc(var(--radius-card)-1px)] bg-white">
             <div className="flex flex-wrap items-start justify-between gap-3 sm:items-center">
               <div className="min-w-0 flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
                 <CardTitle>Generation inputs</CardTitle>
@@ -248,7 +248,7 @@ export function CreateGenerationForm() {
               </div>
 
               {error ? (
-                <div className="rounded-[12px] border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                <div className="rounded-[var(--radius-control)] border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
                   <p>{error.message}</p>
                   {error.details.length > 0 ? (
                     <ul className="mt-2 space-y-1 text-xs leading-5 text-destructive/90">

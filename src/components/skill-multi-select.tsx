@@ -60,7 +60,7 @@ export function SkillMultiSelect({
 
   if (options.length === 0) {
     return (
-      <div className="flex min-h-9 items-center rounded-[10px] border border-dashed border-border bg-muted/50 px-3 text-sm text-muted-foreground">
+      <div className="flex min-h-9 items-center rounded-[var(--radius-control)] border border-dashed border-border bg-muted/50 px-3 text-sm text-muted-foreground">
         No approved skills are available yet.
       </div>
     );
@@ -87,7 +87,7 @@ export function SkillMultiSelect({
         disabled={disabled}
         onClick={() => setIsOpen((current) => !current)}
         className={cn(
-          "flex h-9 w-full items-center justify-between gap-3 rounded-[10px] border border-input bg-background px-3 text-sm text-foreground shadow-[0_1px_2px_rgba(15,23,42,0.03)] outline-none transition-[border-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:bg-muted/40 disabled:text-muted-foreground",
+          "flex h-9 w-full items-center justify-between gap-3 rounded-[var(--radius-control)] border border-input bg-background px-3 text-sm text-foreground shadow-[0_1px_2px_rgba(15,23,42,0.03)] outline-none transition-[border-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:bg-muted/40 disabled:text-muted-foreground",
           selectedOptions.length > 0 ? "border-border" : "text-muted-foreground",
         )}
       >
@@ -113,7 +113,7 @@ export function SkillMultiSelect({
           id={popupId}
           role="group"
           aria-labelledby={labelId}
-          className="absolute left-0 top-[calc(100%+0.5rem)] z-30 w-full overflow-hidden rounded-[12px] border border-border bg-white shadow-[0_18px_40px_rgba(15,23,42,0.08)]"
+          className="absolute left-0 top-[calc(100%+0.5rem)] z-30 w-full overflow-hidden rounded-[var(--radius-control)] border border-border bg-white shadow-[0_18px_40px_rgba(15,23,42,0.08)]"
         >
           <div className="max-h-80 overflow-y-auto p-1.5">
             {options.map((skill) => {
@@ -123,7 +123,7 @@ export function SkillMultiSelect({
                 <label
                   key={skill.id}
                   className={cn(
-                    "flex cursor-pointer items-start gap-3 rounded-[10px] px-3 py-3 transition-[background-color,border-color]",
+                    "flex cursor-pointer items-start gap-3 rounded-[var(--radius-compact)] px-3 py-3 transition-[background-color,border-color]",
                     active
                       ? "bg-accent/50"
                       : "bg-white hover:bg-secondary/60",
@@ -151,7 +151,7 @@ export function SkillMultiSelect({
                   </div>
                   <span
                     className={cn(
-                      "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-[5px] border",
+                      "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-[var(--radius-compact)] border",
                       active
                         ? "border-primary bg-primary/10 text-primary"
                         : "border-input bg-background text-transparent",

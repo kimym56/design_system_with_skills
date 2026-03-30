@@ -97,7 +97,7 @@ test("workspace page shows the generation builder heading", async () => {
       .getByRole("heading", { name: /generation inputs/i })
       .closest("[class*='bg-white']")
       ?.className,
-  ).toMatch(/rounded-t-\[15px\]/);
+  ).toMatch(/rounded-t-\[calc\(var\(--radius-card\)-1px\)\]/);
   expect(
     screen.getByRole("heading", { name: /generation inputs/i }).closest(".border-b"),
   ).not.toBeInTheDocument();
@@ -133,7 +133,7 @@ test("workspace page shows the generation builder heading", async () => {
   expect(
     screen
       .getByRole("heading", { name: /generation inputs/i })
-      .closest("[class*='rounded-[16px]']")
+      .closest("[class*='rounded-[var(--radius-card)]']")
       ?.className,
   ).not.toMatch(/overflow-hidden/);
   expect(
@@ -143,9 +143,15 @@ test("workspace page shows the generation builder heading", async () => {
     "aria-pressed",
     "true",
   );
+  expect(
+    screen.getByRole("group", { name: /generated result view/i }).className,
+  ).toMatch(/rounded-\[var\(--radius-control\)\]/);
   expect(screen.getByRole("button", { name: /^code$/i })).toHaveAttribute(
     "aria-pressed",
     "false",
+  );
+  expect(screen.getByRole("button", { name: /^preview$/i }).className).toMatch(
+    /rounded-\[var\(--radius-compact\)\]/,
   );
   expect(
     screen.getByRole("button", { name: /open large preview/i }),

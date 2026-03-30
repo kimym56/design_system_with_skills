@@ -32,7 +32,7 @@ test("homepage shows signed-out users explicit Google sign-in buttons", async ()
   expect(screen.queryAllByText(/portfolio/i)).toHaveLength(0);
   expect(
     screen.getByRole("heading", {
-      name: /product systems with working surfaces/i,
+      name: /generate design system components with agent skills/i,
     }),
   ).toBeInTheDocument();
 
@@ -60,10 +60,10 @@ test("homepage shows signed-out users explicit Google sign-in buttons", async ()
   });
   expect(getServerAuthSessionMock).toHaveBeenCalledTimes(1);
 
-  expect(screen.getByText(/core surfaces/i)).toBeInTheDocument();
-  expect(screen.getByText(/operating principles/i)).toBeInTheDocument();
+  expect(screen.getByText(/evaluation surfaces/i)).toBeInTheDocument();
+  expect(screen.getByText(/review rules/i)).toBeInTheDocument();
   expect(
-    screen.getByText(/run a component generation/i),
+    screen.getByText(/generate a component run/i),
   ).toBeInTheDocument();
   expect(screen.getByText(/generation inputs/i)).toBeInTheDocument();
   const evidenceCards = screen.getAllByTestId("landing-evidence-card");
@@ -76,9 +76,9 @@ test("homepage shows signed-out users explicit Google sign-in buttons", async ()
     expect(card).toHaveClass("sm:py-3");
   });
   expect(
-    screen.queryByText(/proof in the product surface/i),
+    screen.queryByText(/design engineer/i),
   ).not.toBeInTheDocument();
-  expect(screen.queryByText(/simple workflow/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/selected work/i)).not.toBeInTheDocument();
 });
 
 test("homepage shows signed-in users an account chip instead of Google sign-in buttons", async () => {

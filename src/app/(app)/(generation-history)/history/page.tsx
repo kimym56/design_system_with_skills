@@ -1,6 +1,9 @@
 import { HistoryList } from "@/components/history-list";
+import { requireUserSession } from "@/lib/auth/guards";
 
-export default function HistoryPage() {
+export default async function HistoryPage() {
+  await requireUserSession("/history");
+
   return (
     <main className="space-y-4 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
       <header className="space-y-1.5">

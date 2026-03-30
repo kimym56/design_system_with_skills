@@ -1,20 +1,53 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { vi } from "vitest";
+import { beforeEach, vi } from "vitest";
 
 import GenerationDetailPage from "@/app/(app)/(generation-history)/history/[generationId]/page";
+
+const { requireUserSessionMock } = vi.hoisted(() => ({
+  requireUserSessionMock: vi.fn(),
+}));
+
+vi.mock("@/lib/auth/guards", () => ({
+  requireUserSession: requireUserSessionMock,
+}));
 
 vi.mock("next/navigation", () => ({
   useParams: () => ({ generationId: "demo-generation" }),
 }));
 
-test("generation detail page shows editorial loading copy before data arrives", () => {
+const renderGenerationDetailPage =
+  GenerationDetailPage as unknown as (props: {
+    params: Promise<{ generationId: string }>;
+  }) => Promise<React.ReactNode> | React.ReactNode;
+
+beforeEach(() => {
+  requireUserSessionMock.mockReset();
+  requireUserSessionMock.mockResolvedValue({
+    user: {
+      id: "user-1",
+      email: "ymkim@example.com",
+      name: "Yongmin Kim",
+      image: null,
+    },
+  });
+});
+
+test("generation detail page shows editorial loading copy before data arrives", async () => {
   vi.stubGlobal(
     "fetch",
     vi.fn(() => new Promise(() => {})) as unknown as typeof fetch,
   );
 
-  render(<GenerationDetailPage />);
+  render(
+    await renderGenerationDetailPage({
+      params: Promise.resolve({ generationId: "demo-generation" }),
+    }),
+  );
+
+  expect(requireUserSessionMock).toHaveBeenCalledWith(
+    "/history/demo-generation",
+  );
 
   expect(screen.getByText(/loading saved result/i)).toBeInTheDocument();
 
@@ -50,7 +83,15 @@ test("generation detail page shows the saved run summary", async () => {
       })) as unknown as typeof fetch,
   );
 
-  render(<GenerationDetailPage />);
+  render(
+    await renderGenerationDetailPage({
+      params: Promise.resolve({ generationId: "demo-generation" }),
+    }),
+  );
+
+  expect(requireUserSessionMock).toHaveBeenCalledWith(
+    "/history/demo-generation",
+  );
 
   expect(
     await screen.findByRole("heading", { name: /button/i }),

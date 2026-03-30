@@ -2,6 +2,20 @@ import { redirect } from "next/navigation";
 
 import { getServerAuthSession } from "@/auth";
 
+function normalizeCallbackUrl(callbackUrl: string) {
+  if (callbackUrl.startsWith("/")) {
+    return callbackUrl;
+  }
+
+  return "/workspace";
+}
+
+function buildSignInHref(callbackUrl: string) {
+  return `/sign-in?callbackUrl=${encodeURIComponent(
+    normalizeCallbackUrl(callbackUrl),
+  )}`;
+}
+
 function parseAdminEmails(source: string | undefined) {
   return (source ?? "")
     .split(",")
@@ -9,11 +23,11 @@ function parseAdminEmails(source: string | undefined) {
     .filter(Boolean);
 }
 
-export async function requireUserSession() {
+export async function requireUserSession(callbackUrl: string) {
   const session = await getServerAuthSession();
 
   if (!session?.user) {
-    redirect("/");
+    redirect(buildSignInHref(callbackUrl));
   }
 
   return session;

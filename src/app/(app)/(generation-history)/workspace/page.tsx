@@ -1,8 +1,11 @@
 import { CreateGenerationForm } from "@/components/create-generation-form";
+import { requireUserSession } from "@/lib/auth/guards";
 
 export const dynamic = "force-dynamic";
 
-export default function WorkspacePage() {
+export default async function WorkspacePage() {
+  await requireUserSession("/workspace");
+
   return (
     <main className="space-y-4 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
       <header className="space-y-1.5">

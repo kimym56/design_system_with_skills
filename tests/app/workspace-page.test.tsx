@@ -1,9 +1,29 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { vi } from "vitest";
+import { beforeEach, vi } from "vitest";
 
 import * as workspacePageModule from "@/app/(app)/(generation-history)/workspace/page";
 import WorkspacePage from "@/app/(app)/(generation-history)/workspace/page";
+
+const { requireUserSessionMock } = vi.hoisted(() => ({
+  requireUserSessionMock: vi.fn(),
+}));
+
+vi.mock("@/lib/auth/guards", () => ({
+  requireUserSession: requireUserSessionMock,
+}));
+
+beforeEach(() => {
+  requireUserSessionMock.mockReset();
+  requireUserSessionMock.mockResolvedValue({
+    user: {
+      id: "user-1",
+      email: "ymkim@example.com",
+      name: "Yongmin Kim",
+      image: null,
+    },
+  });
+});
 
 test("workspace page forces dynamic rendering to avoid stale prerendered form HTML", () => {
   expect(workspacePageModule.dynamic).toBe("force-dynamic");
@@ -33,7 +53,9 @@ test("workspace page shows the generation builder heading", async () => {
       })) as unknown as typeof fetch,
   );
 
-  render(<WorkspacePage />);
+  render(await WorkspacePage());
+
+  expect(requireUserSessionMock).toHaveBeenCalledWith("/workspace");
 
   expect(
     screen.getByRole("heading", { name: /run a component generation/i }),

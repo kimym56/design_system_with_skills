@@ -65,6 +65,13 @@ test("homepage shows signed-out users explicit Google sign-in buttons", async ()
     screen.getByText(/run a component generation/i),
   ).toBeInTheDocument();
   expect(screen.getByText(/generation inputs/i)).toBeInTheDocument();
+  const evidenceCards = screen.getAllByTestId("landing-evidence-card");
+  expect(evidenceCards).toHaveLength(3);
+  evidenceCards.forEach((card) => {
+    expect(card).toHaveClass("space-y-1.5");
+    expect(card).toHaveClass("px-3.5");
+    expect(card).toHaveClass("py-3");
+  });
   expect(
     screen.queryByText(/proof in the product surface/i),
   ).not.toBeInTheDocument();

@@ -51,11 +51,15 @@ test("uses compact toggle text while preserving dense control sizing", () => {
   const enlargeButton = screen.getByRole("button", {
     name: /open large preview/i,
   });
+  const splitViewButton = screen.getByRole("button", {
+    name: /open split view/i,
+  });
 
   expect(previewToggle).toHaveClass("px-2", "py-0.5", "text-sm");
   expect(codeToggle).toHaveClass("px-2", "py-0.5", "text-sm");
   expect(enlargeButton).toHaveClass("size-7");
   expect(enlargeButton.querySelector("svg")).toHaveClass("size-3");
+  expect(splitViewButton).toHaveClass("h-7", "px-2", "text-xs");
 });
 
 test("opens the active mode in a large dialog", async () => {
@@ -90,6 +94,29 @@ test("opens the active mode in a large dialog", async () => {
   expect(
     screen.getAllByRole("button", { name: /copy generated code/i }),
   ).toHaveLength(2);
+});
+
+test("opens a split dialog that shows preview and code together", async () => {
+  const user = userEvent.setup();
+
+  render(
+    <GenerationResultViewer
+      code={`export function Demo() {\n  return <button>Demo</button>;\n}`}
+      markup="<button>Preview demo</button>"
+    />,
+  );
+
+  await user.click(screen.getByRole("button", { name: /open split view/i }));
+
+  expect(
+    screen.getByRole("dialog", { name: /split view/i }),
+  ).toBeInTheDocument();
+  expect(screen.getAllByTitle(/generated component preview/i)).toHaveLength(2);
+  expect(screen.getByText("export")).toHaveAttribute("data-token-type", "keyword");
+  expect(screen.getByText(/generated-component\.tsx/i)).toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: /copy generated code/i }),
+  ).toBeInTheDocument();
 });
 
 test("renders a distinct loading preview skeleton for the selected component type", () => {

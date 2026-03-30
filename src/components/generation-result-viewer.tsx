@@ -1,6 +1,6 @@
 "use client";
 
-import { Maximize2, X } from "lucide-react";
+import { Columns2, Maximize2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { GenerationCodePanel } from "@/components/generation-code-panel";
@@ -52,9 +52,11 @@ function GenerationResultViewerContent({
 }: GenerationResultViewerProps) {
   const [activeView, setActiveView] = useState<ResultView>("preview");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSplitDialogOpen, setIsSplitDialogOpen] = useState(false);
+  const isAnyDialogOpen = isDialogOpen || isSplitDialogOpen;
 
   useEffect(() => {
-    if (!isDialogOpen) {
+    if (!isAnyDialogOpen) {
       return;
     }
 
@@ -62,7 +64,7 @@ function GenerationResultViewerContent({
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setIsDialogOpen(false);
+        closeDialogs();
       }
     }
 
@@ -73,7 +75,7 @@ function GenerationResultViewerContent({
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isDialogOpen]);
+  }, [isAnyDialogOpen]);
 
   const isPreviewActive = activeView === "preview";
   const inlineDescription = isPreviewActive
@@ -84,6 +86,11 @@ function GenerationResultViewerContent({
     : "Open large code";
   const dialogTitle = isPreviewActive ? "Large preview" : "Large code";
   const selectedComponentType = componentType ?? "Button";
+
+  function closeDialogs() {
+    setIsDialogOpen(false);
+    setIsSplitDialogOpen(false);
+  }
 
   if (isLoading) {
     return (
@@ -126,12 +133,26 @@ function GenerationResultViewerContent({
     );
   }
 
-  function renderActivePanel(size: "inline" | "dialog") {
-    return isPreviewActive ? (
+  function renderPanel(view: ResultView, size: "inline" | "dialog") {
+    return view === "preview" ? (
       <GenerationPreviewFrame markup={markup} size={size} />
     ) : (
       <GenerationCodePanel code={code} size={size} />
     );
+  }
+
+  function renderActivePanel(size: "inline" | "dialog") {
+    return renderPanel(activeView, size);
+  }
+
+  function openLargeDialog() {
+    setIsSplitDialogOpen(false);
+    setIsDialogOpen(true);
+  }
+
+  function openSplitDialog() {
+    setIsDialogOpen(false);
+    setIsSplitDialogOpen(true);
   }
 
   return (
@@ -180,9 +201,21 @@ function GenerationResultViewerContent({
                 type="button"
                 variant="outline"
                 size="sm"
+                className="h-7 px-2 text-xs"
+                aria-label="Open split view"
+                onClick={openSplitDialog}
+              >
+                <Columns2 className="size-3" />
+                See both
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
                 className="size-7 p-0"
                 aria-label={enlargeLabel}
-                onClick={() => setIsDialogOpen(true)}
+                onClick={openLargeDialog}
               >
                 <Maximize2 className="size-3" />
               </Button>
@@ -196,7 +229,7 @@ function GenerationResultViewerContent({
       {isDialogOpen ? (
         <div
           className="fixed inset-0 z-50 bg-slate-950/45 p-4 sm:p-6"
-          onClick={() => setIsDialogOpen(false)}
+          onClick={closeDialogs}
         >
           <div className="flex min-h-full items-center justify-center">
             <div
@@ -222,13 +255,78 @@ function GenerationResultViewerContent({
                   size="sm"
                   className="size-9 p-0"
                   aria-label="Close large view"
-                  onClick={() => setIsDialogOpen(false)}
+                  onClick={closeDialogs}
                 >
                   <X className="size-4" />
                 </Button>
               </div>
 
               <div className="p-5 sm:p-6">{renderActivePanel("dialog")}</div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {isSplitDialogOpen ? (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/45 p-4 sm:p-6"
+          onClick={closeDialogs}
+        >
+          <div className="flex min-h-full items-center justify-center">
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Split view"
+              className="w-full max-w-[1280px] overflow-hidden rounded-[var(--radius-panel)] border border-border bg-card shadow-[0_24px_80px_rgba(15,23,42,0.24)]"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center justify-between gap-4 border-b border-border px-5 py-4 sm:px-6">
+                <div className="min-w-0">
+                  <h3 className="text-lg font-semibold tracking-[-0.02em] text-foreground">
+                    Split view
+                  </h3>
+                  <p className="mt-1 text-sm leading-5 text-muted-foreground">
+                    Compare the generated preview and code side by side.
+                  </p>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="size-9 p-0"
+                  aria-label="Close split view"
+                  onClick={closeDialogs}
+                >
+                  <X className="size-4" />
+                </Button>
+              </div>
+
+              <div className="grid gap-4 p-5 sm:p-6 xl:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
+                <div className="min-w-0 space-y-3">
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-semibold tracking-[-0.01em] text-foreground">
+                      Preview
+                    </h4>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                      Rendered output inside the isolated preview runtime.
+                    </p>
+                  </div>
+                  {renderPanel("preview", "dialog")}
+                </div>
+
+                <div className="min-w-0 space-y-3">
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-semibold tracking-[-0.01em] text-foreground">
+                      Code
+                    </h4>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                      Review the exact code returned for this component run.
+                    </p>
+                  </div>
+                  {renderPanel("code", "dialog")}
+                </div>
+              </div>
             </div>
           </div>
         </div>

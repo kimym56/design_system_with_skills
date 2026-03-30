@@ -14,6 +14,7 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { highlightTsx } from "@/lib/code-viewer/highlight-tsx";
 import { cn } from "@/lib/utils";
 
 const featureCards = [
@@ -32,17 +33,18 @@ const featureCards = [
 ] as const;
 
 const specimenSkills = [
-  "minimalist-skill",
-  "taste-skill",
-  "stitch-skill",
+  "anthropics/frontend-design",
+  "ui-ux-pro-max-skill",
 ] as const;
 
 const codeSample = [
-  "export function GeneratedButton() {",
+  "export default function Button() {",
   "  return (",
-  '    <button className="rounded-full bg-neutral-950 px-6 py-3',
-  '      text-sm font-medium text-white shadow-sm">',
-  "      Generate component",
+  "    <button",
+  '      type="button"',
+  '      className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(15,23,42,0.22)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-[0_14px_36px_rgba(15,23,42,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:translate-y-0 active:shadow-[0_8px_20px_rgba(15,23,42,0.2)] disabled:cursor-not-allowed disabled:opacity-50"',
+  "    >",
+  "      Continue",
   "    </button>",
   "  );",
   "}",
@@ -84,6 +86,8 @@ export function LandingPageShell({ isSignedIn }: LandingPageShellProps) {
       window.clearTimeout(timeoutId);
     };
   }, [isGoogleCtaHighlighted]);
+
+  const highlightedCodeSample = highlightTsx(codeSample);
 
   function handleTryDSSkillsClick() {
     const button = mainGoogleButtonRef.current;
@@ -144,7 +148,7 @@ export function LandingPageShell({ isSignedIn }: LandingPageShellProps) {
 
       <div className="mx-auto flex min-h-[calc(100vh-65px)] w-full max-w-[1440px] flex-col px-4 sm:px-6 lg:px-8">
         <div className="flex-1">
-          <section className="grid gap-10 lg:grid-cols-[minmax(0,0.84fr)_minmax(460px,0.96fr)] lg:items-center lg:gap-14">
+          <section className="grid gap-10 lg:grid-cols-[minmax(0,0.84fr)_minmax(0,0.96fr)] lg:items-center lg:gap-14">
             <div className="max-w-2xl space-y-6 lg:space-y-7">
               <div className="space-y-4">
                 <h1 className="text-5xl font-semibold leading-[0.94] tracking-[-0.06em] text-slate-950 sm:text-6xl lg:text-[4.6rem]">
@@ -179,17 +183,12 @@ export function LandingPageShell({ isSignedIn }: LandingPageShellProps) {
               )}
             </div>
 
-            <Card className="overflow-hidden border-slate-900/8 bg-white/90 shadow-[0_26px_80px_rgba(15,23,42,0.10)]">
-              <CardHeader className="gap-4 border-b border-slate-900/8 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.92))]">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium uppercase tracking-[0.24em] text-slate-500">
-                      Workspace specimen
-                    </p>
-                    <CardTitle className="text-[1.75rem] tracking-[-0.04em] text-slate-950">
-                      DSSkills in motion
-                    </CardTitle>
-                  </div>
+            <Card className="mt-8 overflow-hidden border-slate-900/8 bg-white/90 shadow-[0_26px_80px_rgba(15,23,42,0.10)]">
+              <CardHeader className="bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.92))]">
+                <div className="flex items-center justify-between gap-1">
+                  <CardTitle className="text-[1.75rem] tracking-[-0.04em] text-slate-950">
+                    DSSkills in workspace
+                  </CardTitle>
                   <span className="inline-flex items-center rounded-full border border-slate-900/8 bg-slate-100/90 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-slate-600">
                     Product frame
                   </span>
@@ -202,12 +201,12 @@ export function LandingPageShell({ isSignedIn }: LandingPageShellProps) {
 
               <CardContent className="grid gap-4 bg-[linear-gradient(180deg,_rgba(247,248,250,0.78),_rgba(255,255,255,0.98))] pt-6">
                 <div className="rounded-[calc(var(--radius-card)-2px)] border border-slate-900/8 bg-white">
-                  <div className="flex items-center justify-between gap-3 border-b border-slate-900/8 px-4 py-4">
-                    <div>
+                  <div className="flex flex-wrap items-start justify-between gap-3 px-4 py-4 sm:items-center">
+                    <div className="min-w-0 flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
                       <p className="text-base font-semibold tracking-[-0.03em] text-slate-950">
                         Generation inputs
                       </p>
-                      <p className="mt-1 text-xs leading-5 text-slate-500">
+                      <p className="text-xs leading-5 text-slate-500">
                         Choose a component and approved skills before running
                         generation.
                       </p>
@@ -215,8 +214,8 @@ export function LandingPageShell({ isSignedIn }: LandingPageShellProps) {
                     <Sparkles className="size-4 text-slate-400" />
                   </div>
 
-                  <div className="grid gap-3 px-4 py-4 md:grid-cols-[0.85fr_1.2fr_0.9fr] md:items-end">
-                    <div className="space-y-2">
+                  <div className="flex flex-col gap-3 px-4 py-4 pt-0 xl:flex-row xl:items-end">
+                    <div className="space-y-2 xl:w-[180px] xl:shrink-0">
                       <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
                         Component type
                       </p>
@@ -224,7 +223,7 @@ export function LandingPageShell({ isSignedIn }: LandingPageShellProps) {
                         Button
                       </div>
                     </div>
-                    <div className="space-y-2">
+                    <div className="min-w-0 flex-1 space-y-2">
                       <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
                         Approved skills
                       </p>
@@ -232,32 +231,32 @@ export function LandingPageShell({ isSignedIn }: LandingPageShellProps) {
                         {specimenSkills.map((skill) => (
                           <span
                             key={skill}
-                            className="inline-flex items-center rounded-full border border-slate-900/8 bg-white px-2.5 py-1 text-[11px] font-medium tracking-[0.01em] text-slate-700"
+                            className="inline-flex items-center rounded-[var(--radius-control)] border border-slate-900/8 bg-white px-2.5 py-1 text-[11px] font-medium tracking-[0.01em] text-slate-700"
                           >
                             {skill}
                           </span>
                         ))}
                       </div>
                     </div>
-                    <Button
+                    {/* <Button
                       className="w-full justify-between rounded-[var(--radius-control)]"
                       disabled
                       type="button"
                     >
                       Generate run
                       <ArrowUpRight className="size-4" />
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
 
-                <div className="grid gap-4 xl:grid-cols-[0.94fr_1.06fr]">
+                <div className="grid gap-4 xl:grid-cols-[1.08fr_0.92fr]">
                   <div className="rounded-[calc(var(--radius-card)-2px)] border border-slate-900/8 bg-white">
                     <div className="border-b border-slate-900/8 px-4 py-4">
                       <p className="text-base font-semibold tracking-[-0.03em] text-slate-950">
                         Preview
                       </p>
-                      <p className="mt-1 text-xs leading-5 text-slate-500">
-                        Inspect the rendered component before saving the run.
+                      <p className="mt-1 whitespace-nowrap text-xs leading-5 text-slate-500">
+                        Rendered output inside the isolated preview runtime.
                       </p>
                     </div>
 
@@ -265,8 +264,11 @@ export function LandingPageShell({ isSignedIn }: LandingPageShellProps) {
                       <div className="rounded-[var(--radius-card)] border border-slate-900/8 bg-[linear-gradient(180deg,_#f8fbff,_#eef2f7)] p-4">
                         <div className="rounded-[var(--radius-card)] border border-slate-900/8 bg-white px-6 py-10">
                           <div className="flex justify-center rounded-[var(--radius-card)] bg-slate-100/80 px-6 py-10">
-                            <button className="rounded-full bg-slate-950 px-6 py-3 text-sm font-medium text-white shadow-sm">
-                              Generate component
+                            <button
+                              type="button"
+                              className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(15,23,42,0.22)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-[0_14px_36px_rgba(15,23,42,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 active:translate-y-0 active:shadow-[0_8px_20px_rgba(15,23,42,0.2)] disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              Continue
                             </button>
                           </div>
                         </div>
@@ -275,17 +277,44 @@ export function LandingPageShell({ isSignedIn }: LandingPageShellProps) {
                   </div>
 
                   <div className="rounded-[calc(var(--radius-card)-2px)] border border-slate-900/8 bg-[#0f172a] text-slate-50">
-                    <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
-                      <p className="text-base font-semibold tracking-[-0.03em] text-white">
-                        Generated code
+                    <div className="border-b border-white/10 px-4 py-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-base font-semibold tracking-[-0.03em] text-white">
+                          Generated code
+                        </p>
+
+                        <span className="text-[11px] uppercase tracking-[0.18em] text-slate-400">
+                          React
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs leading-5 text-slate-400">
+                        Review the exact code returned for this component run.
                       </p>
-                      <span className="text-[11px] uppercase tracking-[0.18em] text-slate-400">
-                        React
-                      </span>
                     </div>
                     <div className="px-4 py-4">
                       <pre className="overflow-x-auto text-sm leading-6 text-slate-100">
-                        <code>{codeSample}</code>
+                        <code>
+                          {highlightedCodeSample.map((line, lineIndex) => (
+                            <span key={lineIndex} className="block">
+                              {line.map((token, tokenIndex) => (
+                                <span
+                                  key={`${lineIndex}-${tokenIndex}`}
+                                  data-token-type={token.type}
+                                  className={cn(
+                                    token.type === "keyword" &&
+                                      "text-violet-300",
+                                    token.type === "tag" && "text-amber-300",
+                                    token.type === "attribute" &&
+                                      "text-emerald-300",
+                                    token.type === "string" && "text-rose-300",
+                                  )}
+                                >
+                                  {token.value}
+                                </span>
+                              ))}
+                            </span>
+                          ))}
+                        </code>
                       </pre>
                     </div>
                   </div>

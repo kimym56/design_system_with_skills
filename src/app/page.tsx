@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, CheckCircle2 } from "lucide-react";
 
 import { getServerAuthSession } from "@/auth";
 import { AccountMenu } from "@/components/auth/account-menu";
@@ -50,14 +50,14 @@ const operatingPrinciples = [
   "Make proof visible in the interface, not only in portfolio copy.",
 ];
 
-const specimenSkills = ["layout-system", "interaction", "react"];
+const specimenSkills = ["minimalist-skill", "taste-skill", "stitch-skill"];
 
 const codeSample = [
-  "export function WorkspaceEntry() {",
+  "export function GeneratedButton() {",
   "  return (",
   "    <button className=\"rounded-full bg-primary px-6 py-3",
   "      text-sm font-medium text-primary-foreground\">",
-  "      Open workspace",
+  "      Generate component",
   "    </button>",
   "  );",
   "}",
@@ -134,11 +134,11 @@ export default async function Home() {
             <div className="grid gap-3 sm:grid-cols-3">
               {evidenceCards.map((item) => (
                 <Card key={item.label} className="shadow-none">
-                  <CardContent className="space-y-3 p-5">
+                  <CardContent className="space-y-2 px-4 py-4">
                     <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
                       {item.label}
                     </p>
-                    <p className="text-sm leading-6 text-foreground">{item.body}</p>
+                    <p className="text-sm leading-5 text-foreground">{item.body}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -153,67 +153,92 @@ export default async function Home() {
                     Live workspace specimen
                   </p>
                   <CardTitle className="mt-2 text-2xl">
-                    Proof in the product surface
+                    Run a component generation
                   </CardTitle>
                 </div>
-                <Badge variant="secondary">Public front door</Badge>
+                <Badge variant="secondary">Workspace view</Badge>
               </div>
               <CardDescription>
-                The homepage borrows the same panel density as the workspace and
-                history views without pretending to be the app shell.
+                Select a component, choose approved skills, and review the
+                output before saving the run.
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
-              <div className="grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
-                <div className="space-y-4 rounded-[1.25rem] border border-border bg-muted/60 p-4">
-                  <div className="space-y-2">
-                    <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                      Selected skills
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {specimenSkills.map((skill) => (
-                        <Badge key={skill} variant="default">
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="rounded-[1.25rem] border border-border bg-card p-4">
-                    <div className="flex items-start gap-3">
-                      <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
-                      <p className="text-sm leading-6 text-foreground">
-                        Public framing mirrors the product shell instead of
-                        relying on generic marketing proof.
+              <div className="grid gap-4">
+                <div className="rounded-[1.25rem] border border-border bg-card">
+                  <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border bg-white px-4 py-4">
+                    <div className="min-w-0">
+                      <p className="text-lg font-semibold tracking-[-0.02em] text-foreground">
+                        Generation inputs
+                      </p>
+                      <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                        Choose a component type, select approved skills, and run generation.
                       </p>
                     </div>
+                    <p className="shrink-0 text-xs text-muted-foreground">
+                      Open access enabled
+                    </p>
+                  </div>
+                  <div className="grid gap-3 px-4 py-4 md:grid-cols-[0.9fr_1.25fr_0.85fr] md:items-end">
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-foreground">
+                        Component type
+                      </p>
+                      <div className="h-11 rounded-[12px] border border-input bg-background" />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-foreground">
+                        Approved skills
+                      </p>
+                      <div className="flex min-h-11 flex-wrap items-center gap-2 rounded-[12px] border border-input bg-background px-3 py-2">
+                        {specimenSkills.map((skill) => (
+                          <Badge key={skill} variant="default">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <Button type="button" className="w-full justify-between" disabled>
+                      Generate run
+                      <ArrowUpRight className="size-4" />
+                    </Button>
                   </div>
                 </div>
 
-                <div className="grid gap-4">
-                  <div className="rounded-[1.25rem] bg-code-surface p-4 text-code-foreground">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-xs uppercase tracking-[0.22em] text-slate-400">
-                        Generated code
-                      </p>
-                      <span className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                        React
-                      </span>
-                    </div>
-                    <pre className="mt-4 overflow-x-auto text-sm leading-6 text-slate-100">
-                      <code>{codeSample}</code>
-                    </pre>
-                  </div>
-
-                  <div className="rounded-[1.25rem] border border-border bg-background p-4">
-                    <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                      Preview surface
+                <div className="rounded-[1.25rem] border border-border bg-card">
+                  <div className="border-b border-border px-4 py-4">
+                    <p className="text-lg font-semibold tracking-[-0.02em] text-foreground">
+                      Generated result
                     </p>
-                    <div className="mt-4 rounded-[1.25rem] border border-border bg-card p-6">
-                      <div className="flex justify-center rounded-[1rem] bg-accent px-6 py-10">
-                        <button className="rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground">
-                          Open workspace
-                        </button>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                      Rendered output inside the isolated preview runtime.
+                    </p>
+                  </div>
+                  <div className="grid gap-4 px-4 py-4 md:grid-cols-[1.02fr_0.98fr]">
+                    <div className="rounded-[1rem] bg-code-surface p-4 text-code-foreground">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-xs uppercase tracking-[0.22em] text-slate-400">
+                          Generated code
+                        </p>
+                        <span className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                          React
+                        </span>
+                      </div>
+                      <pre className="mt-4 overflow-x-auto text-sm leading-6 text-slate-100">
+                        <code>{codeSample}</code>
+                      </pre>
+                    </div>
+
+                    <div className="rounded-[1rem] border border-border bg-background p-4">
+                      <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
+                        Preview
+                      </p>
+                      <div className="mt-4 rounded-[1rem] border border-border bg-card p-5">
+                        <div className="flex justify-center rounded-[0.875rem] bg-accent px-6 py-10">
+                          <button className="rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground">
+                            Generate component
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>

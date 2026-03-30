@@ -61,6 +61,13 @@ test("homepage shows signed-out users explicit Google sign-in buttons", async ()
 
   expect(screen.getByText(/selected work/i)).toBeInTheDocument();
   expect(screen.getByText(/operating principles/i)).toBeInTheDocument();
+  expect(
+    screen.getByText(/run a component generation/i),
+  ).toBeInTheDocument();
+  expect(screen.getByText(/generation inputs/i)).toBeInTheDocument();
+  expect(
+    screen.queryByText(/proof in the product surface/i),
+  ).not.toBeInTheDocument();
   expect(screen.queryByText(/simple workflow/i)).not.toBeInTheDocument();
 });
 

@@ -47,7 +47,7 @@ const selectedWork = [
 const operatingPrinciples = [
   "Design the system state before styling the surface.",
   "Keep the public route visually related to the authenticated tool.",
-  "Make proof visible in the interface, not only in portfolio copy.",
+  "Make proof visible in the interface, not only in the copy.",
 ];
 
 const specimenSkills = ["minimalist-skill", "taste-skill", "stitch-skill"];
@@ -73,10 +73,10 @@ export default async function Home() {
         <header className="flex flex-col gap-4 rounded-[2rem] border border-border bg-card px-5 py-5 shadow-[0_18px_50px_rgba(9,9,11,0.04)] sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div className="space-y-2">
             <p className="text-xs font-medium uppercase tracking-[0.28em] text-primary">
-              Design Engineer Portfolio
+              Design Engineer
             </p>
             <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-              Public entry point for the same product system behind the workspace
+              Entry surface for the same product system behind the workspace
               and saved runs.
             </p>
           </div>
@@ -94,14 +94,14 @@ export default async function Home() {
         <section className="grid gap-6 lg:grid-cols-[1.02fr_0.98fr] lg:items-start">
           <div className="space-y-8">
             <div className="space-y-5">
-              <Badge variant="secondary">Product-first portfolio</Badge>
+              <Badge variant="secondary">Working surface</Badge>
               <div className="space-y-4">
                 <h1 className="max-w-4xl text-5xl font-semibold leading-[0.94] tracking-[-0.05em] text-foreground sm:text-6xl lg:text-7xl">
                   Product systems with working surfaces.
                 </h1>
                 <p className="max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
                   I design and ship interface systems that stay coherent from
-                  the public entry point to the working product surface.
+                  the entry surface to the working product surface.
                 </p>
               </div>
             </div>
@@ -257,14 +257,14 @@ export default async function Home() {
           <Card className="overflow-hidden shadow-none">
             <CardHeader className="space-y-3">
               <p className="text-xs font-medium uppercase tracking-[0.28em] text-primary">
-                Selected work
+                Core surfaces
               </p>
               <CardTitle className="text-3xl tracking-[-0.04em] sm:text-4xl">
                 A few surfaces carrying the same system language.
               </CardTitle>
               <CardDescription className="max-w-2xl">
                 Each surface is designed as part of one working product rather
-                than as isolated portfolio shots.
+                than as isolated mockups.
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-3">
@@ -321,7 +321,7 @@ export default async function Home() {
               Enter the working surface
             </p>
             <h2 className="max-w-3xl text-4xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">
-              The portfolio stays public. The workspace shows the system in its
+              The landing page stays public. The workspace shows the system in its
               operational state.
             </h2>
             <p className="max-w-2xl text-base leading-8 text-muted-foreground">

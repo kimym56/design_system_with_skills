@@ -29,6 +29,7 @@ test("homepage shows signed-out users explicit Google sign-in buttons", async ()
 
   render(await Home());
 
+  expect(screen.queryAllByText(/portfolio/i)).toHaveLength(0);
   expect(
     screen.getByRole("heading", {
       name: /product systems with working surfaces/i,
@@ -59,7 +60,7 @@ test("homepage shows signed-out users explicit Google sign-in buttons", async ()
   });
   expect(getServerAuthSessionMock).toHaveBeenCalledTimes(1);
 
-  expect(screen.getByText(/selected work/i)).toBeInTheDocument();
+  expect(screen.getByText(/core surfaces/i)).toBeInTheDocument();
   expect(screen.getByText(/operating principles/i)).toBeInTheDocument();
   expect(
     screen.getByText(/run a component generation/i),

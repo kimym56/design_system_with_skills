@@ -105,6 +105,23 @@ test("starts closed on smaller screens", () => {
   expect(screen.getByText("child")).toBeInTheDocument();
 });
 
+test("shows a compact account trigger instead of the generation history label when user info is available", () => {
+  render(
+    <GenerationHistoryShell
+      accountUser={{
+        name: "Yongmin Kim",
+        email: "ymkim@example.com",
+        image: null,
+      }}
+    >
+      <div>child</div>
+    </GenerationHistoryShell>,
+  );
+
+  expect(screen.getByRole("button", { name: /yongmin/i })).toBeInTheDocument();
+  expect(screen.queryByText(/generation history/i)).not.toBeInTheDocument();
+});
+
 test("closes the mobile overlay drawer on backdrop click", async () => {
   render(
     <GenerationHistoryShell>

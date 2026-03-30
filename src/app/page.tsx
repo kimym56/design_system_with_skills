@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, ShieldCheck, Sparkles } from "lucide-react";
 
+import { getServerAuthSession } from "@/auth";
+import { AccountMenu } from "@/components/auth/account-menu";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { toAccountMenuUser } from "@/lib/auth/account-menu-user";
 
 const trustSignals = [
   "Approved GitHub skill catalog",
@@ -47,7 +50,10 @@ const codeSample = [
   "}",
 ].join("\n");
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerAuthSession();
+  const accountUser = toAccountMenuUser(session?.user);
+
   return (
     <main className="min-h-screen bg-background">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-14 px-4 py-4 sm:px-6 sm:py-6">
@@ -61,10 +67,14 @@ export default function Home() {
             </h1>
           </div>
 
-          <GoogleSignInButton callbackUrl="/workspace" variant="outline">
+          {accountUser ? (
+            <AccountMenu user={accountUser} variant="homepage" />
+          ) : (
+            <GoogleSignInButton callbackUrl="/workspace" variant="outline">
               Sign in with Google
               <ArrowUpRight className="size-4" />
-          </GoogleSignInButton>
+            </GoogleSignInButton>
+          )}
         </header>
 
         <section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
@@ -90,13 +100,17 @@ export default function Home() {
                   <ArrowUpRight className="size-4" />
                 </Link>
               </Button>
-              <GoogleSignInButton
-                callbackUrl="/workspace"
-                size="lg"
-                variant="outline"
-              >
+              {accountUser ? (
+                <AccountMenu user={accountUser} variant="homepage" />
+              ) : (
+                <GoogleSignInButton
+                  callbackUrl="/workspace"
+                  size="lg"
+                  variant="outline"
+                >
                   Sign in with Google
-              </GoogleSignInButton>
+                </GoogleSignInButton>
+              )}
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">

@@ -3,6 +3,14 @@ import { beforeEach, vi } from "vitest";
 
 import AppLayout from "@/app/(app)/(generation-history)/layout";
 
+const { getServerAuthSessionMock } = vi.hoisted(() => ({
+  getServerAuthSessionMock: vi.fn(),
+}));
+
+vi.mock("@/auth", () => ({
+  getServerAuthSession: getServerAuthSessionMock,
+}));
+
 vi.mock("next/navigation", () => ({
   usePathname: () => "/workspace",
 }));
@@ -12,6 +20,15 @@ vi.mock("@/components/recent-history-list", () => ({
 }));
 
 beforeEach(() => {
+  getServerAuthSessionMock.mockReset();
+  getServerAuthSessionMock.mockResolvedValue({
+    user: {
+      id: "user-1",
+      name: "Yongmin Kim",
+      email: "ymkim@example.com",
+      image: null,
+    },
+  });
   Object.defineProperty(window, "matchMedia", {
     writable: true,
     value: vi.fn(() => ({
@@ -27,11 +44,11 @@ beforeEach(() => {
   });
 });
 
-test("generation-history layout renders the shared left rail", () => {
+test("generation-history layout renders the shared left rail", async () => {
   render(
-    <AppLayout>
-      <div>child</div>
-    </AppLayout>,
+    await AppLayout({
+      children: <div>child</div>,
+    }),
   );
 
   expect(
@@ -45,6 +62,9 @@ test("generation-history layout renders the shared left rail", () => {
   expect(screen.getByText(/recent runs/i)).toBeInTheDocument();
   expect(screen.getByText(/mock recent history/i)).toBeInTheDocument();
   expect(screen.getByText("child")).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: /yongmin/i })).toBeInTheDocument();
+  expect(screen.queryByText(/generation history/i)).not.toBeInTheDocument();
+  expect(getServerAuthSessionMock).toHaveBeenCalledTimes(1);
   expect(screen.getByTestId("generation-history-content")).not.toHaveClass(
     "rounded-[16px]",
   );

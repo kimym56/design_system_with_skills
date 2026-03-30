@@ -4,17 +4,21 @@ import { Menu } from "lucide-react";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
+import { AccountMenu } from "@/components/auth/account-menu";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Button } from "@/components/ui/button";
+import type { AccountMenuUser } from "@/lib/auth/account-menu-user";
 import { cn } from "@/lib/utils";
 
 const DESKTOP_MEDIA_QUERY = "(min-width: 1280px)";
 
 type GenerationHistoryShellProps = {
+  accountUser?: AccountMenuUser | null;
   children: React.ReactNode;
 };
 
 export function GenerationHistoryShell({
+  accountUser,
   children,
 }: GenerationHistoryShellProps) {
   const pathname = usePathname();
@@ -128,9 +132,13 @@ export function GenerationHistoryShell({
           >
             <Menu className="size-4" />
           </Button>
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-            Generation history
-          </p>
+          {accountUser ? (
+            <AccountMenu user={accountUser} variant="compact" />
+          ) : (
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              Generation history
+            </p>
+          )}
         </div>
 
         <main

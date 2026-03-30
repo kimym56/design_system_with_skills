@@ -4,8 +4,13 @@ import { vi } from "vitest";
 
 import Home from "@/app/page";
 
-const { signInMock } = vi.hoisted(() => ({
+const { getServerAuthSessionMock, signInMock } = vi.hoisted(() => ({
+  getServerAuthSessionMock: vi.fn(),
   signInMock: vi.fn(),
+}));
+
+vi.mock("@/auth", () => ({
+  getServerAuthSession: getServerAuthSessionMock,
 }));
 
 vi.mock("next-auth/react", () => ({
@@ -13,14 +18,16 @@ vi.mock("next-auth/react", () => ({
 }));
 
 beforeEach(() => {
+  getServerAuthSessionMock.mockReset();
+  getServerAuthSessionMock.mockResolvedValue(null);
   signInMock.mockReset();
   signInMock.mockResolvedValue(undefined);
 });
 
-test("homepage shows the product headline and sends explicit sign-in clicks directly to Google", async () => {
+test("homepage shows signed-out users explicit Google sign-in buttons", async () => {
   const user = userEvent.setup();
 
-  render(<Home />);
+  render(await Home());
 
   expect(
     screen.getByRole("heading", {
@@ -50,8 +57,31 @@ test("homepage shows the product headline and sends explicit sign-in clicks dire
   expect(signInMock).toHaveBeenNthCalledWith(2, "google", {
     callbackUrl: "/workspace",
   });
+  expect(getServerAuthSessionMock).toHaveBeenCalledTimes(1);
 
   expect(screen.getByText(/open access is live right now/i)).toBeInTheDocument();
 
   expect(screen.getByText(/simple workflow/i)).toBeInTheDocument();
+});
+
+test("homepage shows signed-in users an account chip instead of Google sign-in buttons", async () => {
+  getServerAuthSessionMock.mockResolvedValue({
+    user: {
+      id: "user-1",
+      name: "Yongmin Kim",
+      email: "ymkim@example.com",
+      image: null,
+    },
+  });
+
+  render(await Home());
+
+  expect(
+    screen.getAllByRole("button", { name: /yongmin kim/i }),
+  ).toHaveLength(2);
+  expect(screen.getAllByText(/^account$/i)).toHaveLength(2);
+  expect(
+    screen.queryByRole("button", { name: /sign in with google/i }),
+  ).not.toBeInTheDocument();
+  expect(getServerAuthSessionMock).toHaveBeenCalledTimes(1);
 });
